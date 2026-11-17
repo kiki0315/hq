@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>一人会社HQ — 溝口拓斗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7ead0; --surface:#fffcf4; --surface2:#f3e4c2; --ink:#33261a; --muted:#857052; --line:#e7d3a6;
+  --accent:#8a5a13; --accent2:#fdeec3; --amber:#b45309; --amber-bg:#fef0c0; --red:#b42318; --blue:#466a8a; --blue-bg:#e3edf5;
+  --shadow:0 6px 0 rgba(166,124,58,.12),0 14px 28px rgba(120,84,30,.10);
+  --floor:#f3e5c3; --floor-line:#e8d5a8; --desk:#d9b77c; --desk-edge:#b48f52;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#241c12; --surface:#2f2517; --surface2:#3a2d1b; --ink:#f7ecd4; --muted:#c4ad85; --line:#4d3d24; --accent:#f0b95a; --accent2:#3d2f14; --amber:#fbbf24; --amber-bg:#3a2c10; --blue:#9cc2e8; --blue-bg:#1e2e42; --shadow:0 8px 24px rgba(0,0,0,.35); --floor:#2a2114; --floor-line:#3d2f1a; --desk:#6d573a; --desk-edge:#54432c; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);background-image:radial-gradient(rgba(150,110,50,.13) 1.2px,transparent 1.3px),linear-gradient(rgba(150,110,50,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(150,110,50,.05) 1px,transparent 1px);background-size:22px 22px,44px 44px,44px 44px;color:var(--ink);font-family:"Noto Sans JP",system-ui,-apple-system,sans-serif;line-height:1.6}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit}
+button,[role="button"],select,summary{ min-height:44px}
+input,textarea,select{color:var(--ink)}
+.wrap{flex:1;min-width:0;max-width:1120px;margin:0 auto;padding:0 16px 48px}
+
+/* Views (SPA) */
+.view{display:none}
+.view.active{display:block;animation:view-in .28s ease}
+@keyframes view-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.view-head{padding:26px 0 6px}
+.view-head h2{font-family:"Noto Serif JP",serif;font-size:30px;margin:4px 0 6px;letter-spacing:-.01em;line-height:1.2}
+.view-head p{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
+
+/* Layout + Sidebar */
+.layout{display:flex;align-items:flex-start;max-width:1400px;margin:0 auto}
+.sidebar{width:236px;flex-shrink:0;position:sticky;top:61px;height:calc(100vh - 61px);height:calc(100dvh - 61px);overflow-y:auto;padding:20px 14px 24px;border-right:1px solid var(--line)}
+.side-label{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:0 12px;margin:0 0 8px}
+.side-nav{display:flex;flex-direction:column;gap:2px}
+.side-nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:13.5px;font-weight:500;min-height:44px;line-height:1.35;cursor:pointer}
+.side-nav a:hover{background:var(--surface2)}
+.side-nav a.active{background:var(--accent2);color:var(--accent);font-weight:700}
+.side-nav a .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.55;flex-shrink:0}
+.side-nav a.active .dot{background:var(--accent);opacity:1}
+.side-nav a .dot.live{background:#22a06b;opacity:1;animation:dot-pulse 1.6s ease-in-out infinite}
+@keyframes dot-pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,160,107,.45)}50%{box-shadow:0 0 0 5px rgba(34,160,107,0)}}
+.side-nav a .nav-badge{margin-left:auto;font-size:10.5px;font-weight:700;background:var(--amber-bg);color:var(--amber);border-radius:99px;padding:1px 7px;flex-shrink:0}
+.side-group{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);padding:14px 12px 4px}
+.side-foot{margin-top:20px;padding:12px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted);line-height:1.6}
+.side-close{display:none}
+.menu-btn{display:none;width:44px;height:44px;border:1px solid var(--line);background:var(--surface);border-radius:10px;cursor:pointer;place-items:center;flex-shrink:0;padding:0}
+.scrim{position:fixed;inset:0;background:rgba(10,14,12,.45);z-index:38}
+@media(max-width:960px){
+  .menu-btn{display:grid}
+  .sidebar{display:none;position:fixed;top:0;left:0;z-index:40;width:min(280px,82vw);height:100vh;height:100dvh;background:var(--bg);border-right:1px solid var(--line);box-shadow:12px 0 32px rgba(0,0,0,.18);padding-top:14px}
+  .sidebar.open{display:block;animation:drawer-in .25s ease}
+  @keyframes drawer-in{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+  .side-close{display:grid;margin-left:auto}
+  .side-toprow{display:flex;align-items:center;gap:8px;padding:0 4px}
+}
+
+/* Header */
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1120px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:38px;height:38px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:900;font-family:"Noto Serif JP",serif;font-size:18px;border-radius:9px;flex-shrink:0}
+.brand b{font-size:15px;letter-spacing:.02em}
+.brand span{display:block;font-size:11px;color:var(--muted);line-height:1.2}
+.updated{font-size:11px;color:var(--muted);text-align:right;line-height:1.4}
+.updated strong{color:var(--ink);font-size:12px}
+
+/* Hero (dashboard) */
+.hero{padding:28px 0 18px;display:grid;grid-template-columns:1.35fr .65fr;gap:20px;align-items:end}
+.hero h1{font-family:"Noto Serif JP",serif;font-size:42px;line-height:1.05;margin:6px 0 10px;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.kicker{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:56ch}
+.hero-card{background:var(--ink);color:#f2f4f2;border-radius:14px;padding:18px}
+.hero-card small{opacity:.7;font-size:11px;letter-spacing:.08em}
+.hero-card div{font-size:14px;margin-top:6px;line-height:1.7}
+.hero-card b{font-size:16px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 18px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;display:block}
+.kpi-row{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:nowrap}
+.kpi input{border:none;background:transparent;font-weight:900;font-size:26px;width:100%;min-width:0;flex:1;padding:2px 0;border-bottom:2px dashed var(--line);outline:none}
+.kpi input:focus{border-color:var(--accent)}
+.kpi input.small{font-size:22px;width:72px}
+.kpi .unit{font-weight:700;color:var(--muted)}
+.kpi p{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.bar-amber i{background:#d97706}
+.bar-gray i{background:#9aa69e}
+
+/* Sections */
+.section{margin-top:26px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.sec-head h2{font-size:20px;margin:0;letter-spacing:-.01em}
+.sec-head span{font-size:12px;color:var(--muted)}
+.sec-head .view-link{font-size:12.5px;font-weight:700;text-decoration:none;cursor:pointer}
+
+/* Todo */
+.todo-card{background:var(--surface);border:1px solid #f0d48a;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+@media(prefers-color-scheme:dark){.todo-card{border-color:#4a3a12}}
+.todo-head{background:var(--amber-bg);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.todo-head b{font-size:15px}
+.todo-head span{font-size:12px;background:var(--surface);border:1px solid var(--line);padding:4px 10px;border-radius:99px;font-weight:700}
+.todo-list{list-style:none;margin:0;padding:6px}
+.todo-list li{border-bottom:1px solid var(--line)}
+.todo-list li:last-child{border-bottom:none}
+.todo-list label{display:flex;gap:12px;align-items:flex-start;padding:13px 10px;cursor:pointer;min-height:56px}
+.todo-list input[type=checkbox]{width:22px;height:22px;margin-top:2px;accent-color:var(--accent);flex-shrink:0}
+.todo-list label.done .todo-title{text-decoration:line-through;color:var(--muted)}
+.todo-title{font-weight:700;font-size:14.5px;line-height:1.4}
+.todo-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;vertical-align:middle;margin-left:6px}
+.badge-wait{background:#fef3c7;color:#92400e}
+.badge-stop{background:#fee4e2;color:#7a271a}
+.badge-self{background:#e0e7ff;color:#3730a3}
+@media(prefers-color-scheme:dark){.badge-wait,.badge-stop,.badge-self{filter:brightness(1.2)}}
+
+/* Overall progress (dashboard) */
+.progress-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.prog-row{display:flex;gap:14px;align-items:center;padding:15px 16px;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none;color:inherit}
+.prog-row:last-child{border-bottom:none}
+.prog-row:hover{background:var(--surface2)}
+.prog-ic{width:42px;height:42px;border-radius:11px;background:var(--accent2);color:var(--accent);display:grid;place-items:center;font-weight:900;font-size:13px;flex-shrink:0;font-family:"Noto Serif JP",serif}
+.prog-main{flex:1;min-width:0}
+.prog-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.prog-top b{font-size:14.5px}
+.prog-top .prog-note{font-size:12px;color:var(--muted)}
+.prog-pct{font-weight:900;font-size:14px;color:var(--accent);flex-shrink:0}
+.prog-row .bar{margin-top:7px}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--surface2);color:var(--muted);margin-left:6px;vertical-align:middle}
+.pill.go{background:#dcfce7;color:#166534}
+.pill.hold{background:#fef3c7;color:#92400e}
+.pill.wait{background:#e0e7ff;color:#3730a3}
+@media(prefers-color-scheme:dark){.pill.go,.pill.hold,.pill.wait{filter:brightness(1.15)}}
+
+/* Office mini preview (dashboard) */
+.mini-office{background:var(--ink);color:#eef2ee;border-radius:16px;padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.mini-office h3{margin:0;font-size:16px;color:#fff}
+.mini-office .mo-sub{font-size:12px;opacity:.75;margin:2px 0 0}
+.mo-stats{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.mo-stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 12px;font-size:12px;line-height:1.4}
+.mo-stat b{display:block;font-size:17px;color:#fff}
+.mo-seats{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 14px}
+.mo-seat{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px;background:rgba(255,255,255,.14);color:#fff;position:relative;border:2px solid transparent}
+.mo-seat.working{border-color:#3ecf9a;animation:seat-bob 2.6s ease-in-out infinite}
+.mo-seat.waiting{border-color:#fbbf24}
+.mo-seat i{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:#8a938c}
+.mo-seat.working i{background:#3ecf9a}
+.mo-seat.waiting i{background:#fbbf24}
+@keyframes seat-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.btn-light{background:#fff;color:#171a18;border:none;padding:10px 18px;border-radius:99px;font-weight:700;font-size:13px;cursor:pointer;min-height:44px}
+.btn-ghostlight{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:10px 18px;border-radius:99px;font-weight:700;font-size:13px;cursor:pointer;min-height:44px;margin-left:8px}
+
+/* Divisions (detail views) */
+.biz{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.biz-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.biz-num{font-size:11px;font-weight:900;letter-spacing:.12em;color:var(--accent)}
+.biz h3{margin:4px 0 2px;font-size:20px;line-height:1.3}
+.biz .sub{font-size:12.5px;color:var(--muted)}
+.status{flex-shrink:0}
+.status select{border:1px solid var(--line);background:var(--surface2);border-radius:99px;padding:6px 10px;font-size:12px;font-weight:700;min-height:36px}
+.biz ul{margin:12px 0;padding-left:18px;font-size:14px;color:#2b322e}
+@media(prefers-color-scheme:dark){.biz ul{color:#cbd5cc}}
+.biz ul li{margin:5px 0}
+.biz .detail-note{font-size:13.5px;color:var(--muted);background:var(--surface2);border-radius:10px;padding:12px 14px;margin:6px 0 4px;line-height:1.7}
+.metric-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.metric{background:var(--surface2);border-radius:10px;padding:10px 12px;flex:1;min-width:120px}
+.metric label{font-size:11px;color:var(--muted);font-weight:700;display:block}
+.metric .val{display:flex;align-items:baseline;gap:4px}
+.metric input{border:none;background:transparent;font-weight:900;font-size:20px;width:80px;border-bottom:2px dashed var(--line);outline:none;padding:1px 0}
+.metric input:focus{border-color:var(--accent)}
+.memo{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line)}
+.memo label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+.memo textarea{width:100%;margin-top:6px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;min-height:84px;resize:vertical;font-size:13.5px;line-height:1.6}
+.memo textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.saved{font-size:11px;color:var(--accent);opacity:0;transition:opacity .2s}
+.saved.show{opacity:1}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;margin-top:18px}
+
+/* Warm screenshot-style cards */
+.kpi,.biz,.info,.ostat,.status-row,.flow-card,.log-card,.progress-card,.todo-card{border-radius:20px!important;border-width:2px!important}
+.hero-card{border-radius:20px;background:#33261a}
+.mark{border-radius:12px;background:#33261a;color:#fdeec3;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.sidebar{background:color-mix(in srgb,var(--bg) 92%,#fff)}
+.side-nav a{border-radius:12px}
+.side-nav a.active{background:#fff3cf;box-shadow:inset 0 0 0 1.5px #e7c979}
+.btn,.btn-light{border-radius:99px}
+.staff{border-radius:18px;border-width:2px;background:var(--surface)}
+/* pixel mini avatar in staff list */
+.pix{width:52px;height:64px;margin:0 auto 6px;position:relative;image-rendering:pixelated}
+.pix .v-head{width:30px;height:30px}
+.pix .v-body{width:26px;height:18px}
+.dept-badge{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.04em;padding:2px 8px;border-radius:99px;background:#fdeec3;color:#7a5410;border:1.5px solid #e7c979;margin-top:5px}
+.routine{margin-top:8px;background:var(--surface2);border:1.5px dashed var(--line);border-radius:10px;padding:8px 10px;text-align:left}
+.routine b{display:block;font-size:11px;letter-spacing:.04em;color:var(--muted);margin-bottom:2px}
+.routine span{display:block;font-size:12px;line-height:1.5;color:var(--ink);font-weight:600}
+.routine small{display:block;font-size:11px;color:var(--muted);line-height:1.45;margin-top:2px}
+.wb{display:inline-block;font-size:10px;font-weight:900;padding:2px 7px;border-radius:99px;vertical-align:middle;margin-left:5px;white-space:nowrap}
+.wb-live{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.wb-always{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.wb-wait{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.wb-after{background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe}
+.wb-pres{background:#33261a;color:#fdeec3;border:1px solid #33261a}
+@media(prefers-color-scheme:dark){.wb-live,.wb-always,.wb-wait,.wb-after{filter:brightness(1.15)}}
+.duty-card{background:var(--surface);border:2px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:18px}
+.duty-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+@media(max-width:640px){.duty-grid{grid-template-columns:1fr}}
+.duty-item{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border-radius:12px;padding:10px 12px}
+.duty-item b{font-size:13px;white-space:nowrap}
+.duty-item span{font-size:12.5px;line-height:1.5}
+.duty-item small{display:block;color:var(--muted);font-size:11px}
+@media(prefers-color-scheme:dark){.dept-badge{background:#3d2f14;color:#f0b95a;border-color:#6b5426}}
+/* ============ OFFICE ============ */
+.office-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 14px}
+.ostat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ostat label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;display:block}
+.ostat b{font-size:22px;font-weight:900}
+.ostat span{font-size:11.5px;color:var(--muted)}
+.floor-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:18px;box-shadow:var(--shadow)}
+.floor{min-width:900px;background:var(--floor);background-image:linear-gradient(var(--floor-line) 1px,transparent 1px),linear-gradient(90deg,var(--floor-line) 1px,transparent 1px);background-size:44px 44px;border:1px solid var(--line);border-radius:18px;padding:18px;position:relative}
+.floor-tag{position:absolute;top:12px;right:16px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:var(--muted)}
+.floor-row{display:grid;gap:12px;margin-bottom:12px}
+.floor-row:last-child{margin-bottom:0}
+.floor-row.cols-2{grid-template-columns:1.25fr 1fr}
+.floor-row.cols-4{grid-template-columns:repeat(4,1fr)}
+.zone-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin:2px 0 8px}
+.seat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;position:relative;display:flex;flex-direction:column;gap:7px}
+.seat::after{content:"";position:absolute;left:10px;right:10px;bottom:-6px;height:8px;background:linear-gradient(var(--desk),var(--desk-edge));border-radius:0 0 6px 6px;opacity:.85}
+.seat.president{border:2px solid var(--ink)}
+.seat.lead{border-color:#e5c15c}
+.seat-head{display:flex;align-items:center;gap:9px}
+.seat-face{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:15px;background:var(--accent2);color:var(--accent);flex-shrink:0;position:relative}
+.seat.president .seat-face{background:var(--ink);color:var(--bg);font-size:12px}
+.seat.lead .seat-face{background:#fef3c7;color:#92400e}
+.seat.working .seat-face{animation:seat-bob 2.4s ease-in-out infinite}
+.seat-name{line-height:1.3;min-width:0}
+.seat-name b{font-size:14px;display:block}
+.seat-name span{font-size:11px;color:var(--muted);display:block}
+.st-pill{margin-left:auto;flex-shrink:0;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-flex;align-items:center;gap:5px}
+.st-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-work{background:#dcfce7;color:#166534}
+.st-work::before{animation:blink-dot 1.2s ease-in-out infinite}
+.st-wait{background:#e0e7ff;color:#3730a3}
+.st-idle{background:var(--surface2);color:var(--muted)}
+.st-alert{background:#fef3c7;color:#92400e}
+.st-alert::before{animation:blink-dot .8s ease-in-out infinite}
+@media(prefers-color-scheme:dark){.st-work,.st-wait,.st-alert{filter:brightness(1.15)}}
+@keyframes blink-dot{0%,100%{opacity:1}50%{opacity:.25}}
+.bubble{background:var(--accent2);border-radius:10px;padding:7px 10px;font-size:11.5px;line-height:1.5;position:relative;min-height:38px;display:flex;align-items:center;transition:opacity .3s}
+.bubble::before{content:"";position:absolute;top:-5px;left:22px;width:10px;height:10px;background:inherit;transform:rotate(45deg)}
+.bubble.fade{opacity:0}
+.seat.president .bubble{background:var(--amber-bg)}
+.seat-task{font-size:12px;line-height:1.55;color:var(--ink)}
+.seat-task small{display:block;color:var(--muted);font-size:11px}
+.seat .bar{margin-top:auto}
+.seat-bar-note{font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between}
+.typing{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:type-dot 1s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+@keyframes type-dot{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-3px);opacity:1}}
+
+
+/* ============ TOP-DOWN OFFICE (voxel floor) ============ */
+.td-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:18px;box-shadow:var(--shadow)}
+.td-floor{position:relative;width:940px;height:928px;flex-shrink:0;border-radius:22px;overflow:hidden;border:2px solid #dcc493;
+ background:
+  repeating-linear-gradient(90deg, rgba(120,85,40,.07) 0 2px, transparent 2px 92px),
+  repeating-linear-gradient(0deg, rgba(120,85,40,.05) 0 2px, transparent 2px 46px),
+  linear-gradient(160deg,#f3e9d7,#ecdcc0 55%,#e6d3b3);
+}
+@media(prefers-color-scheme:dark){.td-floor{background:repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 2px, transparent 2px 92px),repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 2px, transparent 2px 46px),linear-gradient(160deg,#2a241c,#241e16);border-color:#3a332a}}
+.td-zone{position:absolute;border-radius:16px}
+.td-zone.pres{background:rgba(255,255,255,.58);border:2px dashed rgba(120,90,40,.38);left:18px;top:14px;width:460px;height:158px}
+.td-zone.meet{background:rgba(180,210,235,.38);border:2px dashed rgba(70,110,150,.32);left:494px;top:14px;width:428px;height:158px}
+.td-zone.work{background:rgba(255,255,255,.45);border:2px dashed rgba(90,110,80,.32);left:18px;top:188px;width:596px;height:272px}
+.td-zone.lounge{background:rgba(248,205,220,.34);border:2px dashed rgba(150,90,120,.30);left:630px;top:188px;width:292px;height:272px}
+.td-zone.ai{background:rgba(255,241,196,.62);border:2px dashed rgba(165,125,20,.40);left:18px;top:476px;width:452px;height:210px}
+.td-zone.sns{background:rgba(252,214,228,.48);border:2px dashed rgba(170,80,120,.36);left:486px;top:476px;width:436px;height:210px}
+.td-zone.cw{background:rgba(196,222,248,.48);border:2px dashed rgba(60,100,150,.36);left:18px;top:702px;width:452px;height:210px}
+.td-zone.estate{background:rgba(203,236,196,.52);border:2px dashed rgba(70,130,70,.36);left:486px;top:702px;width:436px;height:210px}
+.td-zone-status{position:absolute;left:10px;bottom:8px;right:10px;font-size:10px;font-weight:800;line-height:1.45;color:#6b5636;background:rgba(255,255,255,.82);border:1.5px solid rgba(150,115,55,.25);border-radius:9px;padding:4px 8px;z-index:1}
+@media(prefers-color-scheme:dark){.td-zone-status{color:#f0dfb2;background:rgba(0,0,0,.45)}}
+.td-zone-label{position:absolute;top:7px;left:11px;font-size:10px;font-weight:900;letter-spacing:.12em;color:#7a6a50;z-index:1}
+@media(prefers-color-scheme:dark){.td-zone-label{color:#cbbfa5}}
+.td-rug{position:absolute;left:652px;top:356px;width:238px;height:82px;border-radius:12px;background:repeating-linear-gradient(45deg,rgba(190,90,90,.20) 0 10px,rgba(240,220,190,.25) 10px 20px);border:2px solid rgba(160,80,80,.25)}
+.td-desk{position:absolute;width:96px;height:46px;background:linear-gradient(#fdfbf7,#efe6d4);border:2px solid #b49b72;border-radius:7px;box-shadow:0 3px 0 rgba(120,90,50,.25);z-index:2}
+.td-desk::before{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:34px;height:22px;background:#3b4a5a;border-radius:3px;box-shadow:inset 0 0 0 2px #222d38}
+.td-desk::after{content:"";position:absolute;left:12px;bottom:5px;width:18px;height:6px;background:#cdbb96}
+.td-desk.big{width:150px;height:56px}
+.td-desk.meet-table{width:210px;height:74px;background:linear-gradient(#f7ecd9,#ecd9b8);border-radius:36px}
+.td-desk.meet-table::before,.td-desk.meet-table::after{display:none}
+.td-chair{position:absolute;width:22px;height:22px;border-radius:6px;background:#8fa8bf;border:2px solid #6d8aa5;z-index:1}
+.td-sofa{position:absolute;width:120px;height:44px;background:#7fae8e;border:2px solid #5d8a6c;border-radius:12px;z-index:2}
+.td-sofa::before{content:"";position:absolute;inset:6px 10px;border:2px solid rgba(255,255,255,.4);border-radius:8px}
+.td-plant{position:absolute;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7fc46a,#3e7d33 70%);border:3px solid #a9743f;z-index:2}
+.td-shelf{position:absolute;width:110px;height:22px;background:repeating-linear-gradient(90deg,#c46a5a 0 12px,#e8c86a 12px 24px,#6a9ec4 24px 36px,#8ec47a 36px 48px);border:3px solid #8a6a42;border-radius:4px;z-index:2}
+.td-coffee{position:absolute;width:44px;height:44px;border-radius:50%;background:#fdfbf7;border:2px solid #b49b72;z-index:2}
+.td-nameplate{position:absolute;font-size:9.5px;font-weight:700;color:#6b5b40;background:rgba(255,255,255,.75);padding:0 5px;border-radius:99px;z-index:2;white-space:nowrap}
+@media(prefers-color-scheme:dark){.td-nameplate{color:#e8dcc2;background:rgba(0,0,0,.45)}}
+/* voxel characters */
+.char{position:absolute;width:46px;height:62px;margin-left:-23px;margin-top:-56px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.char:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.char-shadow{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:30px;height:9px;border-radius:50%;background:rgba(60,40,10,.28)}
+.char-name{position:absolute;left:50%;bottom:62px;transform:translateX(-50%);font-size:10px;font-weight:900;white-space:nowrap;background:#2b2013;color:#fff7dd;padding:2px 8px;border-radius:99px;border:2px solid rgba(255,255,255,.85);box-shadow:0 2px 0 rgba(0,0,0,.25);z-index:3}
+.char-bubble{position:absolute;left:50%;bottom:82px;transform:translateX(-50%) scale(.85);width:168px;background:#fff;color:#222;border:2px solid #222;border-radius:10px;padding:6px 8px;font-size:11px;line-height:1.45;font-weight:700;text-align:left;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:9;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.char-bubble::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);border:4px solid transparent;border-top:6px solid #222}
+.char-bubble.show{opacity:1;transform:translateX(-50%) scale(1)}
+.char-sprite{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:30px}
+.char.walking .char-sprite{animation:walkbob .28s steps(2,end) infinite}
+@keyframes walkbob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}
+.v-head{width:28px;height:28px;margin:0 auto;background:var(--skin,#f2c99a);border:2.5px solid rgba(40,25,5,.55);border-radius:3px;position:relative;box-shadow:inset -6px -6px 0 rgba(0,0,0,.08), inset 4px 4px 0 rgba(255,255,255,.18);image-rendering:pixelated}
+.v-head::before,.v-head::after{content:"";position:absolute;top:13px;width:4px;height:6px;background:#1c1c1c;border-radius:0;box-shadow:0 7px 0 -1px rgba(200,90,90,.55)}
+.v-head::before{left:5px}.v-head::after{right:5px}
+.v-hair{position:absolute;left:-2.5px;right:-2.5px;top:-2.5px;height:10px;background:var(--h,#444);border-radius:3px 3px 0 0;z-index:2}
+.v-hair.h-long{height:26px;width:9px;right:auto;border-radius:3px 0 0 3px;box-shadow:19px 0 0 var(--h)}
+.v-hair.h-spiky{height:12px;clip-path:polygon(0 100%,0 45%,18% 45%,24% 0,42% 38%,58% 0,70% 40%,88% 12%,100% 45%,100% 100%)}
+.v-hair.h-bob{height:16px;border-radius:3px 3px 6px 6px}
+.v-hair.h-cap{height:11px;background:var(--h);border-radius:6px 6px 0 0}
+.v-hair.h-cap::after{content:"";position:absolute;right:-10px;top:7px;width:12px;height:5px;background:var(--h);border:2px solid rgba(0,0,0,.3)}
+.acc{position:absolute;z-index:4;pointer-events:none}
+.acc-glasses{left:2px;right:2px;top:11px;height:9px;border-top:3px solid #222;border-bottom:3px solid transparent}
+.acc-glasses::before,.acc-glasses::after{content:"";position:absolute;top:-1px;width:9px;height:9px;border:2.5px solid #222;border-radius:2px;background:rgba(255,255,255,.18)}
+.acc-glasses::before{left:0}.acc-glasses::after{right:0}
+.acc-headset{left:-5px;right:-5px;top:4px;height:16px;border:3px solid #222;border-bottom:none;border-radius:10px 10px 0 0}
+.acc-headset::before{content:"";position:absolute;right:-3px;bottom:-9px;width:10px;height:6px;background:#222;border-radius:3px}
+.acc-headset::after{content:"";position:absolute;left:-2px;top:10px;width:7px;height:10px;background:#333;border-radius:2px;box-shadow:28px 0 0 #333}
+.acc-bow{right:-4px;top:-7px;width:14px;height:10px;background:#e0527a;border:2px solid rgba(0,0,0,.35);border-radius:50% 50% 50% 50%;transform:rotate(18deg)}
+.acc-beret{left:-4px;top:-8px;width:30px;height:11px;background:var(--acc-c,#4ab8c9);border:2.5px solid rgba(0,0,0,.35);border-radius:50%}
+.acc-band{left:-2.5px;right:-2.5px;top:6px;height:6px;background:#fff;border-top:2px solid rgba(0,0,0,.3);border-bottom:2px solid rgba(0,0,0,.3);z-index:3}
+.acc-pin{right:1px;top:4px;width:7px;height:7px;background:#ffd93d;border:2px solid rgba(0,0,0,.35);border-radius:50%;z-index:5}
+.v-body{width:24px;height:16px;margin:1px auto 0;background:var(--c,#888);border:2.5px solid rgba(40,25,5,.5);border-radius:2px;position:relative;box-shadow:inset 0 -5px 0 rgba(0,0,0,.14)}.v-body::after{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:6px;height:100%;background:rgba(255,255,255,.38);border-left:1.5px solid rgba(0,0,0,.15);border-right:1.5px solid rgba(0,0,0,.15)}
+.v-legs{display:flex;justify-content:center;gap:3px;margin-top:1px}
+.v-leg{width:8px;height:10px;background:#3c4652;border:2px solid rgba(0,0,0,.3);border-radius:2px}
+.char.walking .v-leg.l{animation:legswing .34s ease-in-out infinite}
+.char.walking .v-leg.r{animation:legswing .34s ease-in-out infinite reverse}
+@keyframes legswing{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.char.sitting .v-legs{display:none}
+.char.sitting .char-sprite{bottom:9px}
+.char-typing{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);display:none;gap:3px;z-index:3}
+.char.sitting .char-typing{display:flex}
+.char-typing i{width:5px;height:5px;border-radius:50%;background:#0f6b4f;animation:type-dot 1s ease-in-out infinite}
+.char-typing i:nth-child(2){animation-delay:.15s}.char-typing i:nth-child(3){animation-delay:.3s}
+.char.selected .char-name{background:var(--accent)}
+.td-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}
+.td-controls span{font-size:11.5px;color:var(--muted)}
+.char-detail{margin-top:12px;background:var(--surface);border:1.5px solid var(--accent);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:none}
+.char-detail.show{display:block;animation:view-in .25s ease}
+.char-detail h3{margin:0;font-size:16px}
+.char-detail p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.status-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.status-row{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.status-row .sr-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.status-row .sr-top b{font-size:14px}
+.status-row .sr-role{font-size:11px;color:var(--muted)}
+.status-row p{margin:6px 0 0;font-size:12.5px;line-height:1.55}
+.status-row p small{display:block;color:var(--muted);font-size:11px}
+@media(max-width:860px){.status-list{grid-template-columns:1fr}}
+
+/* Workflow */
+.flow-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-top:16px}
+.flow{display:flex;align-items:center;gap:2px;overflow-x:auto;padding:6px 2px 10px;-webkit-overflow-scrolling:touch}
+.flow-step{flex-shrink:0;text-align:center}
+.flow-chip{background:var(--accent2);color:var(--accent);border:1.5px solid transparent;border-radius:12px;padding:8px 10px;font-size:12px;font-weight:700;line-height:1.35;min-width:74px}
+.flow-chip small{display:block;font-size:10px;font-weight:500;color:var(--muted)}
+.flow-chip.done{background:var(--surface2);color:var(--muted)}
+.flow-chip.now{border-color:var(--accent);animation:chip-glow 1.8s ease-in-out infinite}
+@keyframes chip-glow{0%,100%{box-shadow:0 0 0 0 rgba(15,107,79,.0)}50%{box-shadow:0 0 0 5px rgba(15,107,79,.16)}}
+.flow-arrow{flex-shrink:0;color:var(--muted);font-weight:900;font-size:15px;padding:0 1px;animation:arrow-flow 1.6s ease-in-out infinite}
+@keyframes arrow-flow{0%,100%{opacity:.3;transform:translateX(0)}50%{opacity:1;transform:translateX(2px)}}
+.flow-note{font-size:12px;color:var(--muted);margin:4px 0 0}
+
+/* Activity log */
+.log-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-top:16px}
+.log-list{list-style:none;margin:8px 0 0;padding:0}
+.log-list li{display:flex;gap:10px;padding:9px 2px;border-bottom:1px dashed var(--line);font-size:13px;align-items:baseline}
+.log-list li:last-child{border-bottom:none}
+.log-time{font-size:11.5px;font-weight:700;color:var(--muted);flex-shrink:0;width:44px}
+.log-list .who{font-weight:700}
+.log-live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#166534}
+.log-live::before{content:"";width:8px;height:8px;border-radius:50%;background:#22a06b;animation:blink-dot 1.2s infinite}
+
+/* Staff */
+.staff-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.staff{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 12px;text-align:center}
+.avatar{width:44px;height:44px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:17px;background:var(--accent2);color:var(--accent)}
+.staff.president .avatar{background:var(--ink);color:var(--bg);font-size:15px}
+.staff.lead .avatar{background:#fef3c7;color:#92400e}
+.staff b{display:block;font-size:14px}
+.staff span{font-size:11px;color:var(--muted);line-height:1.4;display:block}
+.staff p{font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.4}
+
+/* Info */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.info{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.info h3{margin:0 0 8px;font-size:15px}
+.info p,.info li{font-size:13.5px;color:var(--muted)}
+.info ul{margin:6px 0;padding-left:18px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{border:1px solid var(--line);background:var(--surface);padding:10px 16px;border-radius:99px;font-weight:700;font-size:13px;cursor:pointer;min-height:44px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media(max-width:860px){
+  .hero{grid-template-columns:1fr}
+  .hero h1{font-size:34px}
+  .view-head h2{font-size:25px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .office-stats{grid-template-columns:1fr 1fr}
+  .info-grid{grid-template-columns:1fr}
+  .staff-grid{grid-template-columns:repeat(2,1fr)}
+  .staff:last-child{grid-column:auto}
+  .floor{min-width:820px}
+}
+@media(max-width:380px){ .kpis{grid-template-columns:1fr 1fr} .kpi input{font-size:24px;width:88px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <button class="menu-btn" id="menuBtn" aria-label="メニューを開く" aria-expanded="false" aria-controls="sidebar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
+    <div class="brand"><div class="mark">拓</div><div><b>一人会社HQ</b><span>溝口拓斗 ・ 一人会社司令塔</span></div></div>
+    <div class="updated">データ時点 <strong>2026年11月17日 10:00</strong><br>最終編集 <span id="lastEdited">—</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="ページメニュー">
+  <div class="side-toprow">
+    <p class="side-label" style="padding:0">Menu</p>
+    <button class="menu-btn side-close" id="menuClose" aria-label="メニューを閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+  </div>
+  <nav class="side-nav">
+    <a data-view-link="dashboard"><span class="dot"></span>ダッシュボード</a>
+    <a data-view-link="office"><span class="dot live"></span>オフィス<span class="nav-badge">承認待ち 4</span></a>
+    <div class="side-group">事業部</div>
+    <a data-view-link="biz-ai"><span class="dot"></span>AI商材事業</a>
+    <a data-view-link="biz-sns"><span class="dot"></span>SNS事業 — Threads</a>
+    <a data-view-link="biz-cw"><span class="dot"></span>受託事業 — クラウドワークス</a>
+    <a data-view-link="biz-estate"><span class="dot"></span>不動産 — 宇都宮</a>
+    <div class="side-group">組織・運用</div>
+    <a data-view-link="staff"><span class="dot"></span>AIスタッフ一覧</a>
+    <a data-view-link="info"><span class="dot"></span>運用ルール・使い方</a>
+  </nav>
+  <div class="side-foot">データ時点<br><strong style="color:var(--ink)">2026年11月17日 10:00</strong><br>チェック・メモ・数字はこのブラウザに保存されます。</div>
+</aside>
+<div class="scrim" id="scrim" hidden></div>
+
+<div class="wrap">
+
+  <!-- ================= DASHBOARD ================= -->
+  <div class="view" data-view="dashboard">
+  <section class="hero">
+    <div>
+      <div class="kicker">Dashboard — Solo Company Headquarters</div>
+      <h1>今日の会社は、<br><em>ここだけ</em>見れば分かる。</h1>
+      <p>社長は溝口拓斗（28歳・本業は営業職 9:00–17:00）。副業として運営する一人会社の全体進捗と、社長の承認待ちだけを集めた司令塔。事業部の詳細は左メニューから開けます。</p>
+    </div>
+    <aside class="hero-card">
+      <small>COMPANY PROFILE</small>
+      <div><b>代表</b>　溝口拓斗<br><b>統括</b>　ボブ（AI）<br><b>体制</b>　社長＋統括＋制作ライン8名＋事業部専任8名 ＝ 18名<br><b>稼働</b>　平日夜・週末が中心（本業 9–17時）</div>
+    </aside>
+  </section>
+
+  <!-- KPI -->
+  <section class="kpis" aria-label="会社の数字サマリー">
+    <div class="kpi">
+      <label>月次目標 ・ 副収入</label>
+      <div class="kpi-row">¥<input class="persist" data-key="goalMonthly" type="number" inputmode="numeric" value="100000" aria-label="月次目標金額"> <span class="unit">/ 月</span></div>
+      <p>一人会社の北極星。まずはここを達成する。</p>
+    </div>
+    <div class="kpi">
+      <label>現在の売上（累計）</label>
+      <div class="kpi-row">¥<input class="persist" data-key="salesTotal" type="number" inputmode="numeric" value="0" aria-label="現在の売上"> </div>
+      <div class="bar bar-amber"><i id="salesBar" style="width:0%"></i></div>
+      <p id="salesPct">目標まであと ¥100,000</p>
+    </div>
+    <div class="kpi">
+      <label>Threads フォロワー</label>
+      <div class="kpi-row"><input class="persist" data-key="followers" type="number" inputmode="numeric" value="0" aria-label="フォロワー数"> <span class="unit">/ <span id="followerGoalText">1,000</span>人</span></div>
+      <div class="bar"><i id="followerBar" style="width:0%"></i></div>
+      <p>@taku242 ・ 目標 <input class="persist small" style="font-size:12px;width:56px;border-bottom:1px dashed var(--line)" data-key="followerGoal" type="number" value="1000" aria-label="フォロワー目標"> 人</p>
+    </div>
+    <div class="kpi">
+      <label>クラウドワークス応募</label>
+      <div class="kpi-row"><input class="persist" data-key="cwApps" type="number" inputmode="numeric" value="11" aria-label="CW応募件数"> <span class="unit">件</span></div>
+      <p>契約 <input class="persist" data-key="cwContracts" type="number" value="0" style="font-size:13px;width:36px" aria-label="CW契約件数"> 件 ・ 全件確認待ち</p>
+      <div class="bar"><i style="width:8%"></i></div>
+      <p>プロフィール充実度 60%</p>
+    </div>
+  </section>
+
+  <!-- TODO -->
+  <section class="section" id="todo">
+    <div class="sec-head"><h2>社長の承認待ち・要対応</h2><span>チェックはこのブラウザに保存されます</span></div>
+    <div class="todo-card">
+      <div class="todo-head"><b>⚑ いま拓斗がやること</b><span id="todoCount">0 / 4 完了</span></div>
+      <ul class="todo-list">
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo1"><span><span class="todo-title">阿部さんへの条件書面メール<span class="badge badge-wait">承認待ち</span></span><br><span class="todo-desc">井上ビル地下1階の条件を書面でもらう下書きが承認待ち（未送信）。ルームズセレクト 阿部さん宛て。</span></span></label></li>
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo2"><span><span class="todo-title">クラウドワークス本人確認<span class="badge badge-self">本人のみ可</span></span><br><span class="todo-desc">身分証の提出が未提出。これが終わるとプロフィール充実度 60% → 上昇。AIでは代替できない。</span></span></label></li>
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo3"><span><span class="todo-title">Threads実績投稿用の売上スクショ<span class="badge badge-wait">送付待ち</span></span><br><span class="todo-desc">MyFans売上画面のスクショ待ち。届けば個人情報をマスク加工して「初月107万円」の実績投稿に使用。</span></span></label></li>
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo4"><span><span class="todo-title">Xサブスク解約<span class="badge badge-stop">停止中</span></span><br><span class="todo-desc">ログイン情報待ちで停止中。状態表示のみ — 情報が揃うまで催促しない。</span></span></label></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- OVERALL PROGRESS -->
+  <section class="section">
+    <div class="sec-head"><h2>会社全体の進捗</h2><span>事業部をタップすると詳細画面へ</span></div>
+    <div class="progress-card">
+      <a class="prog-row" data-view-link="biz-ai">
+        <div class="prog-ic">商</div>
+        <div class="prog-main">
+          <div class="prog-top"><b>AI商材事業<span class="pill hold">販売保留中</span></b><span class="prog-note">テスト作は全7部門の承認完了（7/7）。販売前の修正6件を残して本人の判断で保留中</span></div>
+          <div class="bar"><i style="width:100%"></i></div>
+        </div>
+        <div class="prog-pct">7/7</div>
+      </a>
+      <a class="prog-row" data-view-link="biz-sns">
+        <div class="prog-ic">S</div>
+        <div class="prog-main">
+          <div class="prog-top"><b>SNS事業 — Threads<span class="pill go">運用中</span></b><span class="prog-note">運用Day 2 ・ 1日5投稿（承認タップ式）／ 1週目の投稿計画 35本中 6本投稿済み</span></div>
+          <div class="bar"><i style="width:17%"></i></div>
+        </div>
+        <div class="prog-pct">6/35本</div>
+      </a>
+      <a class="prog-row" data-view-link="biz-cw">
+        <div class="prog-ic">受</div>
+        <div class="prog-main">
+          <div class="prog-top"><b>受託事業 — クラウドワークス<span class="pill wait">確認待ち</span></b><span class="prog-note">応募11件すべてクライアント確認待ち・契約0件 ／ プロフィール充実度60%（本人確認で上昇）</span></div>
+          <div class="bar bar-amber"><i style="width:60%"></i></div>
+        </div>
+        <div class="prog-pct">11件応募</div>
+      </a>
+      <a class="prog-row" data-view-link="biz-estate">
+        <div class="prog-ic">不</div>
+        <div class="prog-main">
+          <div class="prog-top"><b>不動産 — 宇都宮<span class="pill wait">承認待ち</span></b><span class="prog-note">井上ビル地下1階は内見済み・検討前進。次は条件書面の取得（メール下書きが社長承認待ち）</span></div>
+          <div class="bar bar-amber"><i style="width:45%"></i></div>
+        </div>
+        <div class="prog-pct">内見済</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- DUTY SYSTEM -->
+  <section class="section" id="duty">
+    <div class="sec-head"><h2>勤務体制 — 定常業務</h2><span>定期ジョブとして稼働中</span></div>
+    <div class="duty-card">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+        <div><b style="font-size:16px">全員に仕事がある会社にする</b><p style="margin:4px 0 0;font-size:13px;color:var(--muted);line-height:1.6">各スタッフに定常業務と稼働スケジュールを割り当て済み。報告すべきことがあるときだけ動き、投稿・返信・応募・送信は社長の承認を通ります。</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="wb wb-live" style="font-size:12px;padding:6px 12px">稼働中 10件</span><span class="wb wb-always" style="font-size:12px;padding:6px 12px">常時 統括 1名</span><span class="wb wb-wait" style="font-size:12px;padding:6px 12px">案件待ち 制作ライン 5名</span></div>
+      </div>
+      <div class="duty-grid">
+        <div class="duty-item"><b>ハル</b><span>Threads投稿 1日5回<small>約08:42 / 12:42 / 17:42 / 19:42 / 22:42 ・ SNS事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>ユイ</b><span>Threads返信・反応チェック 1日2回<small>昼・夜 ・ SNS事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>バズ</b><span>Threads週次分析＋月次方針提案<small>毎週日曜夜＋月次 ・ SNS事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>シラベ</b><span>CW新規案件リサーチ<small>毎日 朝 ・ 受託事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>ケン</b><span>CW新着メッセージ見張り<small>15分ごと ・ 受託事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>サキ</b><span>CW応募進捗レポート<small>毎日 夜 ・ 受託事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>ダイチ</b><span>宇都宮の新規物件リサーチ<small>毎週月曜 ・ 不動産事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>ミオ</b><span>阿部さん返信メールチェック<small>毎日 ・ 不動産事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>ソラ</b><span>note / Brain 売れ筋リサーチ<small>毎週火曜 ・ AI商材事業部</small></span><span class="wb wb-live">稼働中</span></div>
+        <div class="duty-item"><b>カイケイ</b><span>週次KPI集計<small>毎週日曜 ・ 経理</small></span><span class="wb wb-live">稼働中</span></div>
+      </div>
+      <p style="margin:12px 0 0;font-size:12.5px;color:var(--muted);line-height:1.6">制作ライン（ミライ・ハヤテ・ミツキ・アオ・ネゴシ）はプロジェクト稼働時に工程順（企画→執筆→編集→デザイン→価格）に起動。リンは販売開始後にレビュー・改善で稼働。ボブは全体の取りまとめと承認キュー管理を常時担当し、拓斗が承認・意思決定を行います。</p>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" data-view-link="office">オフィスで勤務体制を見る</button><button class="btn" data-view-link="staff">スタッフ一覧で詳細を見る</button></div>
+    </div>
+  </section>
+
+  <!-- OFFICE MINI PREVIEW -->
+  <section class="section">
+    <div class="sec-head"><h2>オフィスはいま</h2><a class="view-link" data-view-link="office">オフィス画面を開く →</a></div>
+    <div class="mini-office">
+      <h3>AI会社のオフィス — ライブ</h3>
+      <p class="mo-sub">2026年11月17日時点の稼働状況。席の様子と部門間の連携はオフィス画面で見られます。</p>
+      <div class="mo-stats">
+        <div class="mo-stat">作業中<b>6名</b></div>
+        <div class="mo-stat">確認待ち<b>2名</b></div>
+        <div class="mo-stat">待機中<b>9名</b></div>
+        <div class="mo-stat">社長の承認待ち<b>4件</b></div>
+      </div>
+      <div class="mo-seats" aria-label="スタッフの稼働状態">
+        <div class="mo-seat waiting" title="溝口拓斗（社長）— 承認待ち4件">拓<i></i></div>
+        <div class="mo-seat working" title="ボブ（統括）— 作業中">ボ<i></i></div>
+        <div class="mo-seat" title="ミライ（企画）— 待機中">ミ<i></i></div>
+        <div class="mo-seat working" title="シラベ（調査）— 作業中">シ<i></i></div>
+        <div class="mo-seat" title="ハヤテ（執筆）— 待機中">ハ<i></i></div>
+        <div class="mo-seat" title="ミツキ（編集）— 待機中">ミ<i></i></div>
+        <div class="mo-seat" title="アオ（デザイン）— 待機中">ア<i></i></div>
+        <div class="mo-seat waiting" title="ネゴシ（価格・販売）— 確認待ち">ネ<i></i></div>
+        <div class="mo-seat working" title="バズ（マーケティング）— 作業中">バ<i></i></div>
+        <div class="mo-seat" title="カイケイ（経理・分析）— 待機中">カ<i></i></div>
+        <div class="mo-seat" title="ソラ（AI商材事業部）— 待機中">ソ<i></i></div>
+        <div class="mo-seat" title="リン（AI商材事業部）— 待機中">リ<i></i></div>
+        <div class="mo-seat working" title="ハル（SNS事業部）— 作業中">ハ<i></i></div>
+        <div class="mo-seat" title="ユイ（SNS事業部）— 待機中">ユ<i></i></div>
+        <div class="mo-seat working" title="ケン（受託事業部）— 作業中">ケ<i></i></div>
+        <div class="mo-seat" title="サキ（受託事業部）— 待機中">サ<i></i></div>
+        <div class="mo-seat working" title="ダイチ（不動産事業部）— 作業中">ダ<i></i></div>
+        <div class="mo-seat waiting" title="ミオ（不動産事業部）— 確認待ち">ミ<i></i></div>
+      </div>
+      <button class="btn-light" data-view-link="office">オフィスに入る</button><button class="btn-ghostlight" data-view-link="staff">スタッフ一覧</button>
+    </div>
+  </section>
+  </div><!-- /dashboard -->
+
+  <!-- ================= OFFICE ================= -->
+  <div class="view" data-view="office">
+    <div class="view-head">
+      <div class="kicker">Office Floor</div>
+      <h2>AI会社のオフィス</h2>
+      <p>真上から見下ろす俯瞰フロア。既存10名は制作ラインにそのまま配置し、新規採用の専任AI社員8名を4つの事業部エリアに配置しました。ドット絵キャラたちが歩いて受け渡しをします。状態は2026年11月17日時点の実態に合わせています。全員に定常業務と稼働スケジュールを割り当て済みです（詳細は各社員パネルとスタッフ一覧）。</p>
+    </div>
+
+    <div class="office-stats">
+      <div class="ostat"><label>在席</label><b>18</b> <span>名（社長＋AI 17名）</span></div>
+      <div class="ostat"><label>作業中</label><b>6</b> <span>名 — ボブ／シラベ／バズ／ハル／ケン／ダイチ</span></div>
+      <div class="ostat"><label>確認待ち</label><b>2</b> <span>名 — ネゴシ／ミオ</span></div>
+      <div class="ostat"><label>社長の承認待ち</label><b>4</b> <span>件 — ダッシュボードで対応</span></div>
+      <div class="ostat"><label>定常業務（稼働中）</label><b>10</b> <span>件 ＋ 常時統括 1名</span></div>
+    </div>
+
+    <div class="td-scroll"><div class="td-floor" id="tdFloor" aria-label="俯瞰オフィスフロア">
+  <div class="td-zone pres"><span class="td-zone-label">社長・統括エリア — 承認待ち 4件</span></div>
+  <div class="td-zone meet"><span class="td-zone-label">会議スペース（共用）</span></div>
+  <div class="td-zone work"><span class="td-zone-label">制作ライン（既存スタッフ）— 承認 7/7 ・ 次案件待ち</span></div>
+  <div class="td-zone lounge"><span class="td-zone-label">ラウンジ（共用）</span></div>
+  <div class="td-zone ai"><span class="td-zone-label">AI商材事業部</span><span class="td-zone-status">AI商材事業部：販売保留中 ・ 承認 7/7 ・ Brain ¥2,980予定／専任 ソラ・リン</span></div>
+  <div class="td-zone sns"><span class="td-zone-label">SNS事業部（Threads）</span><span class="td-zone-status">SNS事業部：フォロワー 0 / 1,000 ・ 投稿 6/35本 ・ 1日5投稿運用中／専任 ハル・ユイ</span></div>
+  <div class="td-zone cw"><span class="td-zone-label">受託事業部（クラウドワークス）</span><span class="td-zone-status">受託事業部：応募 11件 ・ 契約 0件 ・ 全件確認待ち／専任 ケン・サキ</span></div>
+  <div class="td-zone estate"><span class="td-zone-label">不動産事業部（宇都宮）</span><span class="td-zone-status">不動産事業部：井上ビル内見済 ・ 条件書面待ち／専任 ダイチ・ミオ</span></div>
+  <div class="td-rug"></div>
+  <div class="td-desk big" style="left:52px;top:44px"></div><span class="td-nameplate" style="left:96px;top:108px">社長席</span>
+  <div class="td-desk" style="left:262px;top:48px"></div><span class="td-nameplate" style="left:292px;top:100px">ボブ</span>
+  <div class="td-desk meet-table" style="left:600px;top:52px"></div>
+  <div class="td-chair" style="left:640px;top:24px"></div><div class="td-chair" style="left:700px;top:24px"></div><div class="td-chair" style="left:760px;top:24px"></div>
+  <div class="td-chair" style="left:640px;top:132px"></div><div class="td-chair" style="left:700px;top:132px"></div><div class="td-chair" style="left:760px;top:132px"></div>
+  <div class="td-plant" style="left:866px;top:36px"></div>
+  <!-- production line desks (existing, unchanged) -->
+  <div class="td-desk" style="left:44px;top:238px"></div><span class="td-nameplate" style="left:70px;top:290px">ミライ</span>
+  <div class="td-desk" style="left:164px;top:238px"></div><span class="td-nameplate" style="left:196px;top:290px">シラベ</span>
+  <div class="td-desk" style="left:284px;top:238px"></div><span class="td-nameplate" style="left:314px;top:290px">ハヤテ</span>
+  <div class="td-desk" style="left:404px;top:238px"></div><span class="td-nameplate" style="left:434px;top:290px">ミツキ</span>
+  <div class="td-desk" style="left:44px;top:352px"></div><span class="td-nameplate" style="left:76px;top:404px">アオ</span>
+  <div class="td-desk" style="left:164px;top:352px"></div><span class="td-nameplate" style="left:188px;top:404px">ネゴシ</span>
+  <div class="td-desk" style="left:284px;top:352px"></div><span class="td-nameplate" style="left:316px;top:404px">バズ</span>
+  <div class="td-desk" style="left:404px;top:352px"></div><span class="td-nameplate" style="left:426px;top:404px">カイケイ</span>
+  <div class="td-sofa" style="left:660px;top:238px"></div>
+  <div class="td-coffee" style="left:700px;top:306px"></div>
+  <div class="td-shelf" style="left:790px;top:238px"></div>
+  <div class="td-plant" style="left:866px;top:330px"></div>
+  <!-- AI division -->
+  <div class="td-desk" style="left:44px;top:524px"></div><span class="td-nameplate" style="left:76px;top:576px">ソラ</span>
+  <div class="td-desk" style="left:200px;top:524px"></div><span class="td-nameplate" style="left:232px;top:576px">リン</span>
+  <div class="td-plant" style="left:400px;top:524px"></div><div class="td-shelf" style="left:330px;top:610px"></div>
+  <!-- SNS division -->
+  <div class="td-desk" style="left:512px;top:524px"></div><span class="td-nameplate" style="left:544px;top:576px">ハル</span>
+  <div class="td-desk" style="left:668px;top:524px"></div><span class="td-nameplate" style="left:694px;top:576px">ユイ</span>
+  <div class="td-plant" style="left:856px;top:524px"></div>
+  <!-- CW division -->
+  <div class="td-desk" style="left:44px;top:750px"></div><span class="td-nameplate" style="left:76px;top:802px">ケン</span>
+  <div class="td-desk" style="left:200px;top:750px"></div><span class="td-nameplate" style="left:232px;top:802px">サキ</span>
+  <div class="td-plant" style="left:400px;top:750px"></div><div class="td-shelf" style="left:330px;top:836px"></div>
+  <!-- Estate division -->
+  <div class="td-desk" style="left:512px;top:750px"></div><span class="td-nameplate" style="left:538px;top:802px">ダイチ</span>
+  <div class="td-desk" style="left:668px;top:750px"></div><span class="td-nameplate" style="left:700px;top:802px">ミオ</span>
+  <div class="td-plant" style="left:856px;top:750px"></div>
+  <div id="charLayer"></div>
+</div></div>
+<div class="td-controls">
+  <button class="btn" id="animToggle" type="button">⏸ 動きを止める</button>
+  <span>キャラをタップすると担当・今の仕事・状態が見られます。みんな席で作業 → 立ち上がって受け渡しに歩く → 会話 → 席に戻る、を繰り返しています。</span>
+</div>
+<div class="char-detail" id="charDetail" role="status"></div>
+
+<div class="sec-head" style="margin-top:22px"><h2 style="font-size:16px">全員の状態一覧</h2><span>2026年11月17日時点</span></div>
+<div class="status-list">
+<div class="status-row"><div class="sr-top"><b>溝口拓斗</b><span class="sr-role">社長 / オーナー</span><span class="st-pill st-alert" style="margin-left:auto">要対応 4件</span></div><p>最終承認と意思決定<small>本業 9:00–17:00のため、対応は平日夜・週末が中心</small></p><div class="routine"><b>定常業務 <span class="wb wb-pres">社長</span></b><span>承認・意思決定</span><small>稼働スケジュール：随時 — 承認キューに対応</small></div><div class="bar bar-amber"><i id="presBar" style="width:0%"></i></div><div class="seat-bar-note"><span>要対応リストの消化</span><span id="presBarNote">0 / 4 完了</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ボブ</b><span class="sr-role">統括 / コーディネーター</span><span class="st-pill st-work" style="margin-left:auto">作業中</span></div><p>全体統括・承認キュー管理<small>各部門の状況をダッシュボードへ集約し、社長へ報告</small></p><div class="routine"><b>定常業務 <span class="wb wb-always">常時</span></b><span>全体の取りまとめ・承認キュー管理</span><small>稼働スケジュール：常時</small></div><div class="bar"><i style="width:70%"></i></div><div class="seat-bar-note"><span>進捗</span><span>70%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ミライ</b><span class="sr-role">企画</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>次案件待ち<small>「ChatGPT副業スタートパック」は企画承認済み・販売保留中</small></p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>企画 — 制作ライン第1工程</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div><div class="bar bar-gray"><i style="width:100%"></i></div><div class="seat-bar-note"><span>進捗</span><span>100%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>シラベ</b><span class="sr-role">調査</span><span class="st-pill st-work" style="margin-left:auto">作業中</span></div><p>CW案件リサーチ<small>AIで対応できる案件を探し、応募候補リストを作成</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>CW新規案件リサーチ</span><small>稼働スケジュール：毎日 朝</small></div><div class="bar"><i style="width:60%"></i></div><div class="seat-bar-note"><span>進捗</span><span>60%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ハヤテ</b><span class="sr-role">執筆</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>次案件待ち<small>テスト案件の本文（目次12項目・有料本文6章・特典3点）は承認完了</small></p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>執筆 — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div><div class="bar bar-gray"><i style="width:100%"></i></div><div class="seat-bar-note"><span>進捗</span><span>100%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ミツキ</b><span class="sr-role">編集・品質チェック</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>次案件待ち<small>テスト案件は「修正後に販売可」と判定済み（修正6件は保留中）</small></p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>編集・品質チェック — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div><div class="bar bar-gray"><i style="width:100%"></i></div><div class="seat-bar-note"><span>進捗</span><span>100%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>アオ</b><span class="sr-role">デザイン</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>次案件待ち<small>テスト案件のカバーコンセプト＋図解7点は承認完了</small></p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>デザイン — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div><div class="bar bar-gray"><i style="width:100%"></i></div><div class="seat-bar-note"><span>進捗</span><span>100%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ネゴシ</b><span class="sr-role">価格・販売</span><span class="st-pill st-wait" style="margin-left:auto">確認待ち</span></div><p>CW応募11件の結果待ち管理<small>返信が来た案件から契約条件の確認へ進める</small></p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>価格・販売設計 — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div><div class="bar bar-amber"><i style="width:45%"></i></div><div class="seat-bar-note"><span>進捗</span><span>45%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>バズ</b><span class="sr-role">マーケティング</span><span class="st-pill st-work" style="margin-left:auto">作業中</span></div><p>Threads投稿運用中（Day 2）<small>@taku242 ・ 1日5投稿（8:42 / 12:42 / 17:42 / 19:42 / 22:42）</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>Threads週次分析 ＋ 月次の方針提案</span><small>稼働スケジュール：毎週日曜夜 ＋ 月次</small></div><div class="bar"><i style="width:20%"></i></div><div class="seat-bar-note"><span>進捗</span><span>20%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>カイケイ</b><span class="sr-role">経理・分析</span><span class="dept-badge">制作ライン</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>週次集計待ち<small>売上は現在 ¥0。Threads週次分析と合わせて集計予定</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>週次KPI集計</span><small>稼働スケジュール：毎週日曜</small></div><div class="bar bar-gray"><i style="width:25%"></i></div><div class="seat-bar-note"><span>進捗</span><span>25%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ソラ</b><span class="sr-role">商品・販売ページ管理</span><span class="dept-badge">AI商材事業部</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>販売ページの準備待ち<small>テスト案件は販売保留中のため、再開時にページを整える</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>note / Brain 売れ筋リサーチ</span><small>稼働スケジュール：毎週火曜</small></div><div class="bar bar-gray"><i style="width:30%"></i></div><div class="seat-bar-note"><span>進捗</span><span>30%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>リン</b><span class="sr-role">レビュー・改善</span><span class="dept-badge">AI商材事業部</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>レビュー監視の準備中<small>販売開始後にレビュー収集と改善案づくりを担当</small></p><div class="routine"><b>定常業務 <span class="wb wb-after">販売後に稼働</span></b><span>レビュー収集・改善</span><small>稼働スケジュール：販売開始後に稼働</small></div><div class="bar bar-gray"><i style="width:20%"></i></div><div class="seat-bar-note"><span>進捗</span><span>20%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ハル</b><span class="sr-role">Threads投稿運用</span><span class="dept-badge">SNS事業部</span><span class="st-pill st-work" style="margin-left:auto">作業中</span></div><p>Threads投稿運用をバズと分担<small>@taku242 ・ 投稿スケジュールと原稿出しを担当</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>Threads投稿 1日5回</span><small>稼働スケジュール：毎日 約08:42 / 12:42 / 17:42 / 19:42 / 22:42</small></div><div class="bar"><i style="width:35%"></i></div><div class="seat-bar-note"><span>進捗</span><span>35%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ユイ</b><span class="sr-role">コメント・DM受付</span><span class="dept-badge">SNS事業部</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>コメント・DM受付の待機中<small>モデル募集の連絡はDMのみ。反応が来たら受付を担当</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>Threads返信・反応チェック 1日2回</span><small>稼働スケジュール：毎日 昼・夜</small></div><div class="bar bar-gray"><i style="width:15%"></i></div><div class="seat-bar-note"><span>進捗</span><span>15%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ケン</b><span class="sr-role">案件応募</span><span class="dept-badge">受託事業部</span><span class="st-pill st-work" style="margin-left:auto">作業中</span></div><p>新規案件への応募作業中<small>シラベのリサーチを受けて応募文の作成・送信準備</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>CW新着メッセージ見張り</span><small>稼働スケジュール：15分ごと</small></div><div class="bar"><i style="width:50%"></i></div><div class="seat-bar-note"><span>進捗</span><span>50%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>サキ</b><span class="sr-role">納品・進捗管理</span><span class="dept-badge">受託事業部</span><span class="st-pill st-idle" style="margin-left:auto">待機中</span></div><p>納品・進捗管理表の準備中<small>契約が決まった案件から進捗管理を引き受ける</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>CW応募進捗レポート</span><small>稼働スケジュール：毎日 夜</small></div><div class="bar bar-gray"><i style="width:25%"></i></div><div class="seat-bar-note"><span>進捗</span><span>25%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ダイチ</b><span class="sr-role">物件リサーチ</span><span class="dept-badge">不動産事業部</span><span class="st-pill st-work" style="margin-left:auto">作業中</span></div><p>宇都宮の物件リサーチ中<small>店舗・事務所（飲食可）の候補を継続探索</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>宇都宮の新規物件リサーチ</span><small>稼働スケジュール：毎週月曜</small></div><div class="bar"><i style="width:40%"></i></div><div class="seat-bar-note"><span>進捗</span><span>40%</span></div></div>
+<div class="status-row"><div class="sr-top"><b>ミオ</b><span class="sr-role">条件確認・書類</span><span class="dept-badge">不動産事業部</span><span class="st-pill st-wait" style="margin-left:auto">確認待ち</span></div><p>井上ビルの条件書面待ち<small>書面が届いたら条件チェックと書類整理を担当</small></p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>阿部さんからの返信メールチェック</span><small>稼働スケジュール：毎日</small></div><div class="bar bar-amber"><i style="width:35%"></i></div><div class="seat-bar-note"><span>進捗</span><span>35%</span></div></div>
+</div>
+
+<!-- WORKFLOW -->
+    <div class="flow-card">
+      <div class="sec-head" style="margin-bottom:4px"><h2 style="font-size:16px">仕事の流れ — 部門間の連携</h2><span class="log-live">連携中</span></div>
+      <div class="flow" aria-label="部門間の仕事の流れ">
+        <div class="flow-step"><div class="flow-chip done">企画<small>ミライ</small></div></div><div class="flow-arrow" style="animation-delay:0s">→</div>
+        <div class="flow-step"><div class="flow-chip done">調査<small>シラベ</small></div></div><div class="flow-arrow" style="animation-delay:.2s">→</div>
+        <div class="flow-step"><div class="flow-chip done">執筆<small>ハヤテ</small></div></div><div class="flow-arrow" style="animation-delay:.4s">→</div>
+        <div class="flow-step"><div class="flow-chip done">編集<small>ミツキ</small></div></div><div class="flow-arrow" style="animation-delay:.6s">→</div>
+        <div class="flow-step"><div class="flow-chip done">デザイン<small>アオ</small></div></div><div class="flow-arrow" style="animation-delay:.8s">→</div>
+        <div class="flow-step"><div class="flow-chip done">価格・販売<small>ネゴシ</small></div></div><div class="flow-arrow" style="animation-delay:1s">→</div>
+        <div class="flow-step"><div class="flow-chip now">マーケティング<small>バズ — 稼働中</small></div></div><div class="flow-arrow" style="animation-delay:1.2s">→</div>
+        <div class="flow-step"><div class="flow-chip">経理・分析<small>カイケイ</small></div></div>
+      </div>
+      <p class="flow-note">商材づくりのラインはテスト案件で全工程を通過済み（承認 7/7）。制作ラインが作り、事業部専任（ソラ・リン／ハル・ユイ／ケン・サキ／ダイチ・ミオ）が各事業の運用を引き受ける分業体制です。各工程の成果物は社長（拓斗）の承認を通ってから次へ進みます。</p>
+    </div>
+
+    <!-- ACTIVITY LOG -->
+    <div class="log-card">
+      <div class="sec-head" style="margin-bottom:4px"><h2 style="font-size:16px">連携ログ</h2><span>2026年11月17日時点</span></div>
+      <ul class="log-list">
+        <li><span class="log-time">定常</span><span><span class="who">ハル</span>　Threads投稿 1日5回（約08:42/12:42/17:42/19:42/22:42）稼働中 — 次の投稿は12:42枠</span></li>
+        <li><span class="log-time">定常</span><span><span class="who">ケン</span>　CW新着メッセージ見張り 15分ごと稼働中／ <span class="who">ユイ</span>　Threads返信・反応チェック 1日2回（昼・夜）</span></li>
+        <li><span class="log-time">運用中</span><span><span class="who">バズ → 拓斗</span>　Threads本日分の投稿を承認キューへ。1日5投稿・各回タップ承認制</span></li>
+        <li><span class="log-time">調査中</span><span><span class="who">シラベ → ネゴシ</span>　CWの新規案件リサーチ結果を応募候補として受け渡し中</span></li>
+        <li><span class="log-time">管理中</span><span><span class="who">ネゴシ → ボブ</span>　CW応募11件は全件クライアント確認待ち、返信0件と報告</span></li>
+        <li><span class="log-time">完了</span><span><span class="who">全7部門 → ボブ</span>　AI商材テスト案件は承認 7/7 で完走。販売は社長判断で保留中</span></li>
+        <li><span class="log-time">日曜</span><span><span class="who">カイケイ</span>　21:42の週次分析でThreadsの数字を集計予定</span></li>
+        <li><span class="log-time">分業中</span><span><span class="who">シラベ → ケン（受託事業部）</span>　新規案件3件を応募担当へ受け渡し。サキが進捗管理</span></li>
+        <li><span class="log-time">分業中</span><span><span class="who">バズ → ハル（SNS事業部）</span>　Threads投稿運用を分担。ユイがコメント・DM受付</span></li>
+        <li><span class="log-time">調査中</span><span><span class="who">ダイチ → ミオ（不動産事業部）</span>　物件候補と井上ビルの条件確認を分担</span></li>
+        <li><span class="log-time">準備中</span><span><span class="who">ソラ・リン（AI商材事業部）</span>　販売ページ管理とレビュー改善の受け皿を準備</span></li>
+      </ul>
+    </div>
+
+    <a class="back-link" data-view-link="dashboard">← ダッシュボードに戻る</a>
+  </div><!-- /office -->
+
+  <!-- ================= BIZ AI ================= -->
+  <div class="view" data-view="biz-ai">
+    <div class="view-head">
+      <div class="kicker">Division 01</div>
+      <h2>AI商材事業</h2>
+      <p>note ／ Tips ／ Brain で「AIを使って稼ぐ系」の情報商材を販売する事業部。制作ライン（企画ミライ〜経理カイケイ）が作り、事業部専任のソラ（販売ページ管理）・リン（レビュー・改善）が運用を担当。</p>
+    </div>
+    <article class="biz" style="margin-top:14px">
+      <div class="biz-top"><div><div class="biz-num">DIVISION 01</div><h3>AI商材事業</h3><div class="sub">note ／ Tips ／ Brain で販売</div></div><div class="status"><select class="persist-select" data-key="status-ai" aria-label="AI商材事業ステータス"><option>進行中</option><option selected>保留中</option><option>確認待ち</option><option>販売中</option><option>完了</option></select></div></div>
+      <ul>
+        <li>テーマは「AIを使って稼ぐ系」の情報商材</li>
+        <li>テスト作 <strong>「ChatGPT副業スタートパック：コピペで使えるプロンプト50」</strong></li>
+        <li>全7部門の承認完了（7/7）— 企画〜経理まで通過済み</li>
+        <li>販売前に直す項目が6件残っているが、本人の判断で<strong>一旦保留</strong>（テスト完了のまま置いておく決定済み）</li>
+      </ul>
+      <div class="detail-note">品質チェック（ミツキ）の判定は「修正後に販売可」。カイケイの提案：プロンプト数は無料4＋有料46＝50に統一、特典フルセット込みなら ¥2,980 を維持、10件売れて大きな不備・低評価がなければ11件目から ¥3,980 へ値上げ可。販売導線は X → 無料note → Brain（アフィリエイト30%＝1件 ¥894）。</div>
+      <div class="metric-row">
+        <div class="metric"><label>販売価格（Brain予定）</label><div class="val">¥<input class="persist" data-key="priceBrain" type="number" value="2980"></div></div>
+        <div class="metric"><label>アフィリエイト</label><div class="val"><input class="persist" data-key="affRate" type="number" value="30">%</div></div>
+        <div class="metric"><label>売上</label><div class="val">¥<input class="persist" data-key="salesAi" type="number" value="0"></div></div>
+      </div>
+      <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-ai" placeholder="例：6件の修正に着手するタイミング、次回作のテーマなど"></textarea></div>
+    </article>
+    <a class="back-link" data-view-link="dashboard">← ダッシュボードに戻る</a>
+  </div>
+
+  <!-- ================= BIZ SNS ================= -->
+  <div class="view" data-view="biz-sns">
+    <div class="view-head">
+      <div class="kicker">Division 02</div>
+      <h2>SNS事業 — Threads</h2>
+      <p>@taku242（タク｜myfans）の運用事業部。制作ラインのバズ（マーケティング）と、事業部専任のハル（投稿運用）・ユイ（コメント・DM受付）が担当。分析はカイケイ。</p>
+    </div>
+    <article class="biz" style="margin-top:14px">
+      <div class="biz-top"><div><div class="biz-num">DIVISION 02</div><h3>SNS事業 — Threads</h3><div class="sub">@taku242（タク｜myfans）</div></div><div class="status"><select class="persist-select" data-key="status-sns" aria-label="SNS事業ステータス"><option selected>進行中</option><option>保留中</option><option>確認待ち</option><option>完了</option></select></div></div>
+      <ul>
+        <li>MyFansノウハウ発信 ＋ 撮影モデル募集。将来はノウハウ商材販売へ</li>
+        <li>1日5投稿で運用中（8:42 / 12:42 / 17:42 / 19:42 / 22:42・承認タップ式）</li>
+        <li>公表実績：<strong>MyFans 初月107万円／最高月収800万円</strong>（数字×学びの形で発信）</li>
+        <li>週次分析は毎週日曜 21:42。専用ダッシュボードが別にあります</li>
+      </ul>
+      <div class="detail-note">最初の目標はフォロワー1,000人。1日の内訳はノウハウ2・共感1・おすすめ1・まとめ/質問1、モデル募集は週2〜3回まで（18+明記、連絡はDMのみ）。投稿は改行・空行で読みやすく整形するのがルール。実績投稿には売上スクショ（マスク加工済み）を添付予定で、社長からの送付待ち。</div>
+      <div class="metric-row">
+        <div class="metric"><label>フォロワー</label><div class="val"><input class="persist" data-key="followers2" type="number" value="0">人</div></div>
+        <div class="metric"><label>投稿済み</label><div class="val"><input class="persist" data-key="postsDone" type="number" value="6">本</div></div>
+      </div>
+      <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-sns" placeholder="例：伸びた投稿の型、モデル応募の反応、来週の配分など"></textarea></div>
+    </article>
+    <a class="back-link" data-view-link="dashboard">← ダッシュボードに戻る</a>
+  </div>
+
+  <!-- ================= BIZ CW ================= -->
+  <div class="view" data-view="biz-cw">
+    <div class="view-head">
+      <div class="kicker">Division 03</div>
+      <h2>受託事業 — クラウドワークス</h2>
+      <p>ワーカー名「ぐっち1008」。案件リサーチは制作ラインのシラベ、応募・結果管理はネゴシ、事業部専任のケン（案件応募）・サキ（納品・進捗管理）が担当。</p>
+    </div>
+    <article class="biz" style="margin-top:14px">
+      <div class="biz-top"><div><div class="biz-num">DIVISION 03</div><h3>受託事業 — クラウドワークス</h3><div class="sub">ワーカー名「ぐっち1008」</div></div><div class="status"><select class="persist-select" data-key="status-cw" aria-label="受託事業ステータス"><option>進行中</option><option>保留中</option><option selected>確認待ち</option><option>完了</option></select></div></div>
+      <ul>
+        <li>プロフィール整備済み：自己紹介・職種・受注カテゴリ13件・スキル12件（レベル3）・時給下限 ¥1,500</li>
+        <li>応募11件、全件クライアント確認待ち。契約はまだ0件</li>
+        <li>主な応募：音楽体験記事（¥3,000/記事×月8本想定）、Instagram運用サポート（月¥30,000提示）、日常・実体験ライター10記事（¥34,999提示）</li>
+        <li>本人確認（身分証）が未提出で充実度は60%止まり</li>
+      </ul>
+      <div class="detail-note">応募11件の内訳：音楽体験記事／AI使用◎記事／Instagram運用サポート／観光地Instagram投稿／実体験ライター／年末年始の過ごし方記事／モーニングルーティン記事／日常・実体験ライター／理想の働き方記事／20代向け目標記事／AI情報整理記事。稼働条件は平日夜・週末で週10時間ほど。住まいの形態と都道府県が必要な2候補は保留中。</div>
+      <div class="metric-row">
+        <div class="metric"><label>応募</label><div class="val"><input class="persist" data-key="cwApps2" type="number" value="11">件</div></div>
+        <div class="metric"><label>契約</label><div class="val"><input class="persist" data-key="cwContracts2" type="number" value="0">件</div></div>
+        <div class="metric"><label>充実度</label><div class="val"><input class="persist" data-key="cwProfile" type="number" value="60">%</div></div>
+      </div>
+      <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-cw" placeholder="例：返信があった案件、テストライティングの結果など"></textarea></div>
+    </article>
+    <a class="back-link" data-view-link="dashboard">← ダッシュボードに戻る</a>
+  </div>
+
+  <!-- ================= BIZ ESTATE ================= -->
+  <div class="view" data-view="biz-estate">
+    <div class="view-head">
+      <div class="kicker">Project</div>
+      <h2>不動産 — 宇都宮</h2>
+      <p>店舗・事務所（飲食可）の賃貸物件探し。仲介はルームズセレクト 阿部さん。事業部専任のダイチ（物件リサーチ）・ミオ（条件確認・書類）が担当。</p>
+    </div>
+    <article class="biz" style="margin-top:14px">
+      <div class="biz-top"><div><div class="biz-num">PROJECT</div><h3>不動産 — 宇都宮</h3><div class="sub">店舗・事務所（飲食可）探し</div></div><div class="status"><select class="persist-select" data-key="status-estate" aria-label="不動産ステータス"><option>進行中</option><option>保留中</option><option selected>確認待ち</option><option>完了</option></select></div></div>
+      <ul>
+        <li><strong>井上ビル 地下1階</strong> — 11月12日に内見済み、検討を進める意向</li>
+        <li>仲介はルームズセレクト 阿部さん</li>
+        <li>次のアクション：条件を書面でもらう（メール下書きが承認待ち・未送信）</li>
+        <li>宇都宮で店舗・事務所用、飲食可の物件を継続探索中</li>
+      </ul>
+      <div class="detail-note">内見は2026年11月12日 14:00に現地集合で実施（同行者1名の可能性を事前に共有済み）。拓斗は検討を進める意向で、条件の書面提示を阿部さんに依頼する段階。メール下書きはダッシュボードの要対応リストで承認待ち。</div>
+      <div class="metric-row">
+        <div class="metric"><label>内見済み（井上ビル）</label><div class="val"><input class="persist" data-key="estateViewed" type="number" value="1">件</div></div>
+      </div>
+      <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-estate" placeholder="例：書面で届いた条件、賃料・初期費用の気になった点など"></textarea></div>
+    </article>
+    <a class="back-link" data-view-link="dashboard">← ダッシュボードに戻る</a>
+  </div>
+
+  <!-- ================= STAFF ================= -->
+  <div class="view" data-view="staff">
+    <div class="view-head">
+      <div class="kicker">Organization</div>
+      <h2>AIスタッフ一覧</h2>
+      <p>全18名体制：社長＋統括＋制作ライン8名＋事業部専任8名（新規採用）。各スタッフに定常業務と稼働スケジュールを明記しています。いまの仕事ぶりはオフィス画面でライブ表示しています。</p>
+    </div>
+    <div class="staff-grid" style="margin-top:14px">
+      <div class="staff president"><div class="pix" style="--c:#2b2f36;--h:#171a18;--skin:#f2c99a"><div class="v-head"><div class="v-hair"></div><div class="acc acc-glasses"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>溝口拓斗</b><span>社長 / オーナー</span><br><span class="dept-badge">社長・統括エリア</span><p>最終承認と意思決定。本業と両立しながら全体を見る</p><div class="routine"><b>定常業務 <span class="wb wb-pres">社長</span></b><span>承認・意思決定</span><small>稼働スケジュール：随時 — 承認キューに対応</small></div></div>
+      <div class="staff lead"><div class="pix" style="--c:#e8b13c;--h:#8a5f14;--skin:#ffd9a8"><div class="v-head"><div class="v-hair"></div><div class="acc acc-headset"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ボブ</b><span>統括 / コーディネーター</span><br><span class="dept-badge">社長・統括エリア</span><p>全部署の進行管理と社長への報告窓口</p><div class="routine"><b>定常業務 <span class="wb wb-always">常時</span></b><span>全体の取りまとめ・承認キュー管理</span><small>稼働スケジュール：常時</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#e87a9a;--h:#7a2f47;--skin:#ffe0d6"><div class="v-head"><div class="v-hair h-long"></div><div class="acc acc-bow"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ミライ</b><span>企画</span><br><span class="dept-badge">制作ライン</span><p>商品・投稿の企画立案</p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>企画 — 制作ライン第1工程</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#5aa2e8;--h:#274a6b;--skin:#f2c99a"><div class="v-head"><div class="v-hair"></div><div class="acc acc-glasses"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>シラベ</b><span>調査</span><br><span class="dept-badge">制作ライン</span><p>競合・市場リサーチ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>CW新規案件リサーチ</span><small>稼働スケジュール：毎日 朝</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#63b96b;--h:#2f5a33;--skin:#ffd9a8"><div class="v-head"><div class="v-hair h-spiky"></div><div class="acc acc-band"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ハヤテ</b><span>執筆</span><br><span class="dept-badge">制作ライン</span><p>本文・台本の執筆</p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>執筆 — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#a67fe0;--h:#4c3670;--skin:#ffe8dd"><div class="v-head"><div class="v-hair h-long"></div><div class="acc acc-pin"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ミツキ</b><span>編集・品質チェック</span><br><span class="dept-badge">制作ライン</span><p>校正と販売可否の判定</p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>編集・品質チェック — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#4ab8c9;--h:#26565e;--skin:#f2c99a;--acc-c:#4ab8c9"><div class="v-head"><div class="v-hair"></div><div class="acc acc-beret"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>アオ</b><span>デザイン</span><br><span class="dept-badge">制作ライン</span><p>カバー・図解の設計</p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>デザイン — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#e08a4a;--h:#6e3f1e;--skin:#ffd9a8"><div class="v-head"><div class="v-hair"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ネゴシ</b><span>価格・販売</span><br><span class="dept-badge">制作ライン</span><p>価格と販売条件の設計</p><div class="routine"><b>定常業務 <span class="wb wb-wait">案件待ち</span></b><span>価格・販売設計 — 制作ライン</span><small>稼働スケジュール：プロジェクト稼働時に工程順に起動</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#e05252;--h:#6e2222;--skin:#f2c99a"><div class="v-head"><div class="v-hair h-cap"></div><div class="acc acc-headset"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>バズ</b><span>マーケティング</span><br><span class="dept-badge">制作ライン</span><p>集客・SNS導線の設計</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>Threads週次分析 ＋ 月次の方針提案</span><small>稼働スケジュール：毎週日曜夜 ＋ 月次</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#7a8a99;--h:#39434c;--skin:#ffe0d6"><div class="v-head"><div class="v-hair"></div><div class="acc acc-glasses"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>カイケイ</b><span>経理・分析</span><br><span class="dept-badge">制作ライン</span><p>数字の集計と改善提案</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>週次KPI集計</span><small>稼働スケジュール：毎週日曜</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#5aa2e8;--h:#2f5a8a;--skin:#ffd9b3"><div class="v-head"><div class="v-hair h-bob"></div><div class="acc acc-pin"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ソラ</b><span>商品・販売ページ管理</span><br><span class="dept-badge">AI商材事業部</span><p>販売ページの管理と更新。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>note / Brain 売れ筋リサーチ</span><small>稼働スケジュール：毎週火曜</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#c39ae8;--h:#6b4a8a;--skin:#ffe8dd"><div class="v-head"><div class="v-hair h-long"></div><div class="acc acc-glasses"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>リン</b><span>レビュー・改善</span><br><span class="dept-badge">AI商材事業部</span><p>レビュー収集と改善案づくり。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-after">販売後に稼働</span></b><span>レビュー収集・改善</span><small>稼働スケジュール：販売開始後に稼働</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#2bb673;--h:#173f2a;--skin:#f2c99a"><div class="v-head"><div class="v-hair h-spiky"></div><div class="acc acc-headset"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ハル</b><span>Threads投稿運用</span><br><span class="dept-badge">SNS事業部</span><p>投稿スケジュールと原稿出し。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>Threads投稿 1日5回</span><small>稼働スケジュール：毎日 約08:42 / 12:42 / 17:42 / 19:42 / 22:42</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#f28ab2;--h:#8a2f4f;--skin:#ffe0d6"><div class="v-head"><div class="v-hair h-long"></div><div class="acc acc-bow"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ユイ</b><span>コメント・DM受付</span><br><span class="dept-badge">SNS事業部</span><p>コメントとDMの受付対応。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>Threads返信・反応チェック 1日2回</span><small>稼働スケジュール：毎日 昼・夜</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#4a6fa5;--h:#1e2f4a;--skin:#ffd9a8"><div class="v-head"><div class="v-hair"></div><div class="acc acc-glasses"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ケン</b><span>案件応募</span><br><span class="dept-badge">受託事業部</span><p>新規案件への応募文作成と送信準備。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>CW新着メッセージ見張り</span><small>稼働スケジュール：15分ごと</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#f08a5a;--h:#7a3b1e;--skin:#ffe8dd"><div class="v-head"><div class="v-hair h-bob"></div><div class="acc acc-band"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>サキ</b><span>納品・進捗管理</span><br><span class="dept-badge">受託事業部</span><p>納品物の管理と進捗表の更新。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>CW応募進捗レポート</span><small>稼働スケジュール：毎日 夜</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#7a9a4a;--h:#3a4a1e;--skin:#f2c99a"><div class="v-head"><div class="v-hair h-cap"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ダイチ</b><span>物件リサーチ</span><br><span class="dept-badge">不動産事業部</span><p>宇都宮の店舗・事務所物件の探索。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>宇都宮の新規物件リサーチ</span><small>稼働スケジュール：毎週月曜</small></div></div>
+      <div class="staff"><div class="pix" style="--c:#c9a86a;--h:#2b2b2b;--skin:#ffe0d6;--acc-c:#8a6a2f"><div class="v-head"><div class="v-hair h-long"></div><div class="acc acc-beret"></div></div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><b>ミオ</b><span>条件確認・書類</span><br><span class="dept-badge">不動産事業部</span><p>賃貸条件の確認と書類整理。新規採用の専任スタッフ</p><div class="routine"><b>定常業務 <span class="wb wb-live">稼働中</span></b><span>阿部さんからの返信メールチェック</span><small>稼働スケジュール：毎日</small></div></div>
+    </div>
+    <a class="back-link" data-view-link="office">オフィスで全員の様子を見る →</a>
+  </div>
+
+  <!-- ================= INFO ================= -->
+  <div class="view" data-view="info">
+    <div class="view-head">
+      <div class="kicker">Rules &amp; Guide</div>
+      <h2>運用ルール・使い方</h2>
+      <p>一人会社の運用ルールと、このHQの使い方。</p>
+    </div>
+    <div class="info-grid" style="margin-top:14px">
+      <div class="info">
+        <h3>運用ルール</h3>
+        <ul>
+          <li>Threads投稿は1日5本、各回 社長の承認タップが必要</li>
+          <li>金額に触れる投稿は社長の最終確認が必須。実績は盛らず実数字のみ</li>
+          <li>モデル募集は週2〜3回まで、18+明記。連絡はDMのみ</li>
+          <li>週次分析：日曜 21:42 ／ 2〜3日ごとに速報チェック</li>
+          <li>定常業務：ハル＝Threads投稿1日5回、ユイ＝返信チェック1日2回、ケン＝CW見張り15分ごと、シラベ＝CWリサーチ毎朝、サキ＝CW進捗レポート毎夜、ダイチ＝物件リサーチ毎週月曜、ミオ＝阿部さんメールチェック毎日、ソラ＝売れ筋リサーチ毎週火曜、カイケイ＝KPI集計毎週日曜、バズ＝週次分析日曜夜＋月次提案。制作ライン5名は案件時に工程順に起動、リンは販売後に稼働、ボブは常時統括</li>
+        </ul>
+      </div>
+      <div class="info">
+        <h3>このHQの使い方</h3>
+        <p>ブックマークしてスマホからいつでも開けます。左メニューで画面を切り替える構成で、トップ（ダッシュボード）には全体進捗と承認待ちだけを置いています。要対応のチェック、事業部のメモ、フォロワー数などの数字はこのブラウザに保存され、次に開いたときも残ります（端末・ブラウザごとに保存）。</p>
+        <div class="actions">
+          <button class="btn primary" id="scrollTodo">承認待ちリストへ</button>
+          <button class="btn" id="resetBtn">入力を初期値に戻す</button>
+        </div>
+        <div id="resetConfirm" hidden style="margin-top:12px;background:var(--amber-bg);border:1px solid var(--line);border-radius:10px;padding:12px">
+          <p style="margin:0 0 10px;font-size:13px;color:var(--ink)">このブラウザに保存したチェック・メモ・数字を初期値に戻しますか？</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="resetYes" style="background:#b42318;color:#fff;border-color:#b42318">はい、リセットする</button><button class="btn" id="resetNo">キャンセル</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>一人会社HQ ・ データ時点：2026年11月17日 10:00 JST時点の実データ</span>
+    <span>数字はすべて本人の実績・進行中データです</span>
+  </footer>
+</div>
+</div><!-- /layout -->
+
+<script>
+(function(){
+  var PREFIX='hq_v1_';
+  function $(s,c){return (c||document).querySelector(s)}
+  function $$(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))}
+  function save(key,val){ try{ localStorage.setItem(PREFIX+key, JSON.stringify(val)); markEdited(); }catch(e){} }
+  function load(key){ try{ var v=localStorage.getItem(PREFIX+key); return v===null?null:JSON.parse(v);}catch(e){return null} }
+  function markEdited(){
+    var now=new Date();
+    var str=now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    var el=$('#lastEdited'); if(el) el.textContent=str;
+    try{ localStorage.setItem(PREFIX+'_lastEdited', str); }catch(e){}
+  }
+  var le=load('_lastEdited'); if(le) $('#lastEdited').textContent=le;
+
+  function flashSaved(input){
+    var memo=input.closest('.memo'); if(!memo) return;
+    var s=memo.querySelector('[data-saved]'); if(!s) return;
+    s.classList.add('show'); setTimeout(function(){s.classList.remove('show')},1200);
+  }
+  function updateDerived(){
+    var goal=parseFloat((document.querySelector('[data-key="goalMonthly"]')||{}).value)||100000;
+    var sales=parseFloat((document.querySelector('[data-key="salesTotal"]')||{}).value)||0;
+    var pct=goal>0?Math.min(100, Math.round(sales/goal*100)):0;
+    var bar=$('#salesBar'); if(bar) bar.style.width=pct+'%';
+    var sp=$('#salesPct'); if(sp) sp.textContent = sales>=goal ? '目標達成 🎉' : '目標まであと ¥'+(goal-sales).toLocaleString('ja-JP')+'（'+pct+'%）';
+    var f=parseFloat((document.querySelector('[data-key="followers"]')||{}).value)||0;
+    var fg=parseFloat((document.querySelector('[data-key="followerGoal"]')||{}).value)||1000;
+    var fb=$('#followerBar'); if(fb) fb.style.width=(fg>0?Math.min(100,f/fg*100):0)+'%';
+    var fgt=$('#followerGoalText'); if(fgt) fgt.textContent=fg.toLocaleString('ja-JP');
+    updateTodoCount();
+  }
+  function updateTodoCount(){
+    var boxes=$$('.persist-check'); var done=boxes.filter(function(b){return b.checked}).length;
+    var el=$('#todoCount'); if(el) el.textContent=done+' / '+boxes.length+' 完了';
+    $$('[data-todo-label]').forEach(function(l){ var cb=l.querySelector('input'); if(cb) l.classList.toggle('done', !!cb.checked); });
+    var pb=$('#presBar'); if(pb) pb.style.width=(boxes.length?Math.round(done/boxes.length*100):0)+'%';
+    var pn=$('#presBarNote'); if(pn) pn.textContent=done+' / '+boxes.length+' 完了';
+  }
+
+  $$('.persist').forEach(function(inp){
+    var key=inp.getAttribute('data-key'); var v=load(key); if(v!==null) inp.value=v;
+    inp.addEventListener('input',function(){ save(key, inp.value); updateDerived(); });
+    inp.addEventListener('change',function(){ save(key, inp.value); updateDerived(); });
+  });
+  $$('.persist-text').forEach(function(ta){
+    var key=ta.getAttribute('data-key'); var v=load(key); if(v!==null) ta.value=v;
+    var t; ta.addEventListener('input',function(){ clearTimeout(t); t=setTimeout(function(){ save(key, ta.value); flashSaved(ta); },350); });
+  });
+  $$('.persist-select').forEach(function(sel){
+    var key=sel.getAttribute('data-key'); var v=load(key); if(v!==null) sel.value=v;
+    sel.addEventListener('change',function(){ save(key, sel.value); });
+  });
+  $$('.persist-check').forEach(function(cb){
+    var key=cb.getAttribute('data-key'); var v=load(key); if(v!==null) cb.checked=!!v;
+    cb.addEventListener('change',function(){ save(key, cb.checked); updateTodoCount(); });
+  });
+
+  updateDerived();
+
+  var rc=$('#resetConfirm');
+  var st=$('#scrollTodo'); if(st) st.addEventListener('click',function(){ if(window.__showView) window.__showView('dashboard'); setTimeout(function(){ var t=document.getElementById('todo'); if(t) t.scrollIntoView({behavior:'smooth'}); },60); });
+  var rb=$('#resetBtn'); if(rb) rb.addEventListener('click',function(){ rc.hidden=false; rc.scrollIntoView({behavior:'smooth',block:'nearest'}); });
+  var rn=$('#resetNo'); if(rn) rn.addEventListener('click',function(){ rc.hidden=true; });
+  var ry=$('#resetYes'); if(ry) ry.addEventListener('click',function(){
+    Object.keys(localStorage).filter(function(k){return k.indexOf(PREFIX)===0}).forEach(function(k){ localStorage.removeItem(k); });
+    location.reload();
+  });
+})();
+</script>
+<script>
+(function(){
+  var sidebar=document.getElementById('sidebar');
+  var scrim=document.getElementById('scrim');
+  var menuBtn=document.getElementById('menuBtn');
+  var menuClose=document.getElementById('menuClose');
+  function isMobile(){ return window.matchMedia('(max-width: 960px)').matches; }
+  function openMenu(){
+    sidebar.classList.add('open'); scrim.hidden=false;
+    menuBtn.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    sidebar.classList.remove('open'); scrim.hidden=true;
+    menuBtn.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+  menuBtn.addEventListener('click', openMenu);
+  menuClose.addEventListener('click', closeMenu);
+  scrim.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeMenu(); });
+  window.addEventListener('resize', function(){ if(!isMobile()) closeMenu(); });
+
+  /* ---- SPA view switching ---- */
+  var VIEWS=['dashboard','office','biz-ai','biz-sns','biz-cw','biz-estate','staff','info'];
+  var navLinks=Array.prototype.slice.call(document.querySelectorAll('.side-nav a[data-view-link]'));
+  function showView(id){
+    if(VIEWS.indexOf(id)<0) id='dashboard';
+    Array.prototype.forEach.call(document.querySelectorAll('.view'), function(v){
+      v.classList.toggle('active', v.getAttribute('data-view')===id);
+    });
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('data-view-link')===id); });
+    window.scrollTo(0,0);
+    if(isMobile()) closeMenu();
+    try{ if(location.hash!=='#'+id) history.replaceState(null,'','#'+id); }catch(e){}
+  }
+  window.__showView=showView;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-view-link]'), function(el){
+    el.addEventListener('click', function(e){ e.preventDefault(); showView(el.getAttribute('data-view-link')); });
+  });
+  var initial=(location.hash||'').replace('#','');
+  showView(VIEWS.indexOf(initial)>=0?initial:'dashboard');
+
+  /* ---- Office speech bubbles ---- */
+  var BUBBLES={
+    president:['承認待ちが4件たまってる。まず阿部さんへのメールから片付ける。','Threadsの投稿承認も今日分を確認しないと。','本人確認は自分でしかできない。週末にやる。'],
+    bob:['全部署の進み具合を集約中。社長の承認キューは4件です。','シラベのリサーチ結果、ネゴシへ回しました。','ダッシュボードの数字は最新に保っています。'],
+    mirai:['テスト案件は承認完了。次の企画の号令待ちです。','次はどんなテーマにしますか？案は温めてあります。'],
+    shirabe:['クラウドワークスの新規案件を洗い出し中です。','AIで対応できる案件を優先してリスト化しています。','競合の単価感も合わせて調べています。'],
+    hayate:['原稿は書き上げて承認済み。次の執筆依頼を待ってます。','プロンプト集の原稿、またいつでも書けます。'],
+    mitsuki:['販売前の必須修正は6件。着手の判断は社長待ちです。','品質チェックは厳しめにやります。次の原稿も任せてください。'],
+    ao:['カバー案と図解7点は承認済み。次案件に備えてます。','「道具箱」のコンセプト、次も活かせます。'],
+    negoshi:['CW応募11件、クライアントの返信待ちを管理中です。','返信が来たらすぐ契約条件を確認します。','価格の交渉材料は準備済みです。'],
+    buzz:['Threads週次分析は毎週日曜夜。月次で方針提案も出します。','投稿運用はハルと分担中。次の投稿は12:42枠です。','数字が動いたらカイケイのKPI集計と合わせて報告します。'],
+    kaikei:['週次集計は日曜21:42。数字が動いたらすぐ拾います。','売上はまだ ¥0。最初の1件が入ったらすぐ記録します。']
+  };
+  var bubbleEls=Array.prototype.slice.call(document.querySelectorAll('[data-bubble]'));
+  var idx={};
+  function rotateBubbles(){
+    bubbleEls.forEach(function(el,i){
+      var key=el.getAttribute('data-bubble'); var lines=BUBBLES[key]; if(!lines||lines.length<2) return;
+      idx[key]=((idx[key]||0)+1)%lines.length;
+      el.classList.add('fade');
+      setTimeout(function(){ el.textContent=lines[idx[key]]; el.classList.remove('fade'); },300+i*40);
+    });
+  }
+  if(bubbleEls.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(rotateBubbles, 5200);
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var floor=document.getElementById('tdFloor'); if(!floor) return;
+  var layer=document.getElementById('charLayer');
+  var detail=document.getElementById('charDetail');
+  var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var STAFF={
+    president:{name:'溝口拓斗',short:'拓斗',role:'社長 / オーナー',dept:'社長・統括エリア',c:'#2b2f36',h:'#171a18',skin:'#f2c99a',hair:'',acc:'acc-glasses',home:{x:127,y:150},status:'要対応 4件',task:'最終承認と意思決定（承認待ち4件）'},
+    bob:{name:'ボブ',short:'ボブ',role:'統括 / コーディネーター',dept:'社長・統括エリア',c:'#e8b13c',h:'#8a5f14',skin:'#ffd9a8',hair:'',acc:'acc-headset',home:{x:310,y:142},status:'作業中',task:'全体の取りまとめ・承認キュー管理（常時）'},
+    mirai:{name:'ミライ',short:'ミライ',role:'企画',dept:'制作ライン',c:'#e87a9a',h:'#7a2f47',skin:'#ffe0d6',hair:'h-long',acc:'acc-bow',home:{x:92,y:330},status:'待機中',task:'次案件待ち（テスト案件は企画承認済み）'},
+    shirabe:{name:'シラベ',short:'シラベ',role:'調査',dept:'制作ライン',c:'#5aa2e8',h:'#274a6b',skin:'#f2c99a',hair:'',acc:'acc-glasses',home:{x:212,y:330},status:'作業中',task:'CW新規案件リサーチ（毎日 朝）— 応募候補リスト作成'},
+    hayate:{name:'ハヤテ',short:'ハヤテ',role:'執筆',dept:'制作ライン',c:'#63b96b',h:'#2f5a33',skin:'#ffd9a8',hair:'h-spiky',acc:'acc-band',home:{x:332,y:330},status:'待機中',task:'次案件待ち（テスト案件の本文は承認完了）'},
+    mitsuki:{name:'ミツキ',short:'ミツキ',role:'編集・品質チェック',dept:'制作ライン',c:'#a67fe0',h:'#4c3670',skin:'#ffe8dd',hair:'h-long',acc:'acc-pin',home:{x:452,y:330},status:'待機中',task:'次案件待ち（販売前の必須修正6件は保留中）'},
+    ao:{name:'アオ',short:'アオ',role:'デザイン',dept:'制作ライン',c:'#4ab8c9',h:'#26565e',skin:'#f2c99a',hair:'',acc:'acc-beret',accc:'#4ab8c9',home:{x:92,y:444},status:'待機中',task:'次案件待ち（カバー案＋図解7点は承認完了）'},
+    negoshi:{name:'ネゴシ',short:'ネゴシ',role:'価格・販売',dept:'制作ライン',c:'#e08a4a',h:'#6e3f1e',skin:'#ffd9a8',hair:'',acc:'',home:{x:212,y:444},status:'確認待ち',task:'CW応募11件の結果待ち管理'},
+    buzz:{name:'バズ',short:'バズ',role:'マーケティング',dept:'制作ライン',c:'#e05252',h:'#6e2222',skin:'#f2c99a',hair:'h-cap',acc:'acc-headset',home:{x:332,y:444},status:'作業中',task:'Threads週次分析を担当（毎週日曜夜＋月次方針提案）／投稿運用はハルと分担'},
+    kaikei:{name:'カイケイ',short:'カイケイ',role:'経理・分析',dept:'制作ライン',c:'#7a8a99',h:'#39434c',skin:'#ffe0d6',hair:'',acc:'acc-glasses',home:{x:452,y:444},status:'待機中',task:'週次KPI集計（毎週日曜）'},
+    sora:{name:'ソラ',short:'ソラ',role:'商品・販売ページ管理',dept:'AI商材事業部',c:'#5aa2e8',h:'#2f5a8a',skin:'#ffd9b3',hair:'h-bob',acc:'acc-pin',home:{x:92,y:616},status:'待機中',task:'note / Brain 売れ筋リサーチ（毎週火曜）＋販売ページ準備'},
+    rin:{name:'リン',short:'リン',role:'レビュー・改善',dept:'AI商材事業部',c:'#c39ae8',h:'#6b4a8a',skin:'#ffe8dd',hair:'h-long',acc:'acc-glasses',home:{x:248,y:616},status:'待機中',task:'レビュー監視の準備中（販売開始後に収集・改善）'},
+    haru:{name:'ハル',short:'ハル',role:'Threads投稿運用',dept:'SNS事業部',c:'#2bb673',h:'#173f2a',skin:'#f2c99a',hair:'h-spiky',acc:'acc-headset',home:{x:560,y:616},status:'作業中',task:'Threads投稿 1日5回 — 次の投稿は12:42枠です'},
+    yui:{name:'ユイ',short:'ユイ',role:'コメント・DM受付',dept:'SNS事業部',c:'#f28ab2',h:'#8a2f4f',skin:'#ffe0d6',hair:'h-long',acc:'acc-bow',home:{x:716,y:616},status:'待機中',task:'Threads返信・反応チェック（1日2回／昼・夜）— モデル募集の連絡はDMのみ'},
+    ken:{name:'ケン',short:'ケン',role:'案件応募',dept:'受託事業部',c:'#4a6fa5',h:'#1e2f4a',skin:'#ffd9a8',hair:'',acc:'acc-glasses',home:{x:92,y:842},status:'作業中',task:'CW新着メッセージ見張り（15分ごと）＋応募文の作成・送信準備'},
+    saki:{name:'サキ',short:'サキ',role:'納品・進捗管理',dept:'受託事業部',c:'#f08a5a',h:'#7a3b1e',skin:'#ffe8dd',hair:'h-bob',acc:'acc-band',home:{x:248,y:842},status:'待機中',task:'CW応募進捗レポート（毎日 夜）＋納品・進捗管理'},
+    daichi:{name:'ダイチ',short:'ダイチ',role:'物件リサーチ',dept:'不動産事業部',c:'#7a9a4a',h:'#3a4a1e',skin:'#f2c99a',hair:'h-cap',acc:'',home:{x:560,y:842},status:'作業中',task:'宇都宮の新規物件リサーチ（毎週月曜）— 店舗・事務所／飲食可'},
+    mio:{name:'ミオ',short:'ミオ',role:'条件確認・書類',dept:'不動産事業部',c:'#c9a86a',h:'#2b2b2b',skin:'#ffe0d6',hair:'h-long',acc:'acc-beret',accc:'#8a6a2f',home:{x:716,y:842},status:'確認待ち',task:'阿部さん返信メールチェック（毎日）＋井上ビル条件書面待ち'}
+  };
+  var SCRIPTS=[
+    {from:'shirabe',to:'negoshi',a:'CWの新着案件、3件拾いました！',b:'ありがとう。応募リストに入れます'},
+    {from:'shirabe',to:'ken',a:'新規案件3件、条件確認お願いします',b:'了解です。応募文を作って進めます'},
+    {from:'ken',to:'saki',a:'応募した案件、進捗表に入れてください',b:'入れました。納品期限も管理します'},
+    {from:'haru',to:'president',a:'次の投稿は12:42枠です。承認お願いします',b:'承認待ちはあと4件。順に確認します'},
+    {from:'buzz',to:'president',a:'週次分析は日曜夜に回します',b:'了解。数字を見て方針を決めます'},
+    {from:'buzz',to:'haru',a:'今日の投稿枠、割り振りました',b:'スケジュール通り原稿出します！'},
+    {from:'haru',to:'yui',a:'投稿出しました。反応チェックお願いします',b:'昼と夜に返信・反応チェックしますね'},
+    {from:'ken',to:'bob',a:'CWの新着メッセージ、15分ごとに見張ってます',b:'変化があったらすぐ共有してください'},
+    {from:'sora',to:'bob',a:'売れ筋リサーチは毎週火曜に回します',b:'結果はダッシュボードに共有します'},
+    {from:'mio',to:'bob',a:'阿部さんからの返信、毎日チェックしてます',b:'届いたら社長の承認キューへ入れてください'},
+    {from:'mitsuki',to:'hayate',a:'原稿チェック終わりました',b:'助かります！次の原稿もお願いします'},
+    {from:'bob',to:'president',a:'承認キューは4件です',b:'まず阿部さんへのメールから片付けます'},
+    {from:'ao',to:'buzz',a:'投稿用の画像、できました',b:'17時枠で使います！'},
+    {from:'kaikei',to:'bob',a:'週次集計は日曜21:42に回します',b:'了解。ダッシュボードに反映します'},
+    {from:'mirai',to:'shirabe',a:'次の企画案、まとめました',b:'競合も合わせて調べます'},
+    {from:'hayate',to:'mitsuki',a:'原稿の直し、終わりました',b:'すぐ確認しますね'},
+    {from:'sora',to:'rin',a:'販売ページの下書き、整いました',b:'レビュー欄の見せ方も確認します'},
+    {from:'negoshi',to:'sora',a:'価格は¥2,980でページ反映お願いします',b:'反映しました。販売再開待ちです'},
+    {from:'daichi',to:'mio',a:'宇都宮の候補、2件見つけました',b:'条件と書類まわり、確認します'},
+    {from:'mio',to:'bob',a:'井上ビルは条件書面待ちのままです',b:'了解。社長の承認キューに入れてます'},
+    {from:'daichi',to:'bob',a:'物件リサーチの途中経過です',b:'ありがとう。ダッシュボードに共有します'}
+  ];
+  var chars={};
+  Object.keys(STAFF).forEach(function(key){
+    var s=STAFF[key];
+    var el=document.createElement('div');
+    el.className='char sitting'; el.setAttribute('role','button'); el.setAttribute('tabindex','0');
+    el.setAttribute('aria-label', s.name+'（'+s.role+'）の詳細');
+    el.style.setProperty('--c', s.c); el.style.setProperty('--h', s.h); el.style.setProperty('--skin', s.skin||'#f2c99a'); if(s.accc) el.style.setProperty('--acc-c', s.accc);
+    el.style.left=s.home.x+'px'; el.style.top=s.home.y+'px'; el.style.zIndex=Math.round(s.home.y);
+    el.innerHTML='<div class="char-bubble"></div><div class="char-name">'+s.short+'</div><span class="char-typing"><i></i><i></i><i></i></span><div class="char-sprite"><div class="v-head"><div class="v-hair '+(s.hair||'')+'"></div>'+(s.acc?'<div class="acc '+s.acc+'"></div>':'')+'</div><div class="v-body"></div><div class="v-legs"><div class="v-leg l"></div><div class="v-leg r"></div></div></div><div class="char-shadow"></div>';
+    layer.appendChild(el);
+    var bubble=el.querySelector('.char-bubble');
+    chars[key]={key:key,el:el,bubble:bubble,x:s.home.x,y:s.home.y,state:'idle',queue:[],script:null,talkTimer:0,idleFor:Math.random()*3};
+    function open(){ selectChar(key); }
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+  });
+  var ROUTINE={
+    president:{duty:'承認・意思決定',sched:'随時 — 承認キューに対応',label:'社長'},
+    bob:{duty:'全体の取りまとめ・承認キュー管理',sched:'常時',label:'常時'},
+    mirai:{duty:'企画 — 制作ライン第1工程',sched:'プロジェクト稼働時に工程順に起動（企画→執筆→編集→デザイン→価格）',label:'案件待ち'},
+    shirabe:{duty:'CW新規案件リサーチ',sched:'毎日 朝',label:'稼働中'},
+    hayate:{duty:'執筆 — 制作ライン',sched:'プロジェクト稼働時に工程順に起動',label:'案件待ち'},
+    mitsuki:{duty:'編集・品質チェック — 制作ライン',sched:'プロジェクト稼働時に工程順に起動',label:'案件待ち'},
+    ao:{duty:'デザイン — 制作ライン',sched:'プロジェクト稼働時に工程順に起動',label:'案件待ち'},
+    negoshi:{duty:'価格・販売設計 — 制作ライン',sched:'プロジェクト稼働時に工程順に起動',label:'案件待ち'},
+    buzz:{duty:'Threads週次分析 ＋ 月次の方針提案',sched:'毎週日曜夜 ＋ 月次',label:'稼働中'},
+    kaikei:{duty:'週次KPI集計',sched:'毎週日曜',label:'稼働中'},
+    sora:{duty:'note / Brain 売れ筋リサーチ',sched:'毎週火曜',label:'稼働中'},
+    rin:{duty:'レビュー収集・改善',sched:'販売開始後に稼働',label:'販売後に稼働'},
+    haru:{duty:'Threads投稿 1日5回',sched:'毎日 約08:42 / 12:42 / 17:42 / 19:42 / 22:42',label:'稼働中'},
+    yui:{duty:'Threads返信・反応チェック 1日2回',sched:'毎日 昼・夜',label:'稼働中'},
+    ken:{duty:'CW新着メッセージ見張り',sched:'15分ごと',label:'稼働中'},
+    saki:{duty:'CW応募進捗レポート',sched:'毎日 夜',label:'稼働中'},
+    daichi:{duty:'宇都宮の新規物件リサーチ',sched:'毎週月曜',label:'稼働中'},
+    mio:{duty:'阿部さんからの返信メールチェック',sched:'毎日',label:'稼働中'}
+  };
+  function selectChar(key){
+    var s=STAFF[key]; var r=ROUTINE[key]||{duty:'—',sched:'—',label:''};
+    Object.keys(chars).forEach(function(k){ chars[k].el.classList.toggle('selected', k===key); });
+    detail.innerHTML='<h3>'+s.name+' <span style="font-size:12px;color:var(--muted);font-weight:500">'+s.role+'</span></h3><p><b style="color:var(--ink)">所属：</b>'+(s.dept||'')+'</p><p><b style="color:var(--ink)">状態：</b>'+s.status+'</p><p><b style="color:var(--ink)">今の仕事：</b>'+s.task+'</p><p><b style="color:var(--ink)">定常業務：</b>'+r.duty+' <span style="font-weight:700;color:var(--accent)">['+r.label+']</span></p><p><b style="color:var(--ink)">稼働スケジュール：</b>'+r.sched+'</p>';
+    detail.classList.add('show');
+  }
+  function showBubble(c, text, dur){
+    c.bubble.textContent=text; c.bubble.classList.add('show');
+    setTimeout(function(){ c.bubble.classList.remove('show'); }, dur||3200);
+  }
+  // President ambient bubble
+  setTimeout(function(){ if(!reduced) showBubble(chars.president,'承認待ちが4件。まずメールから片付ける',3600); }, 1800);
+
+  var running=!reduced, scriptIdx=0, activeWalks=0, lastLaunch=0;
+  var toggle=document.getElementById('animToggle');
+  function setRunning(v){
+    running=v;
+    if(toggle) toggle.textContent = v ? '⏸ 動きを止める' : '▶ 動きを再開する';
+    if(!v){ Object.keys(chars).forEach(function(k){ var c=chars[k]; c.el.classList.remove('walking'); }); }
+  }
+  if(toggle){ toggle.addEventListener('click', function(){ setRunning(!running); }); if(reduced) toggle.textContent='▶ 動きを再開する'; }
+
+  function waypoints(from, to){
+    return [{x:to.x, y:to.y+52}];
+  }
+  function launch(){
+    if(activeWalks>=2) return;
+    var sc=SCRIPTS[scriptIdx % SCRIPTS.length]; scriptIdx++;
+    var a=chars[sc.from], b=chars[sc.to];
+    if(!a || !b || a.state!=='idle' || b.state!=='idle') return;
+    a.state='walking'; a.script=sc; a.queue=waypoints({x:a.x,y:a.y}, STAFF[sc.to].home);
+    a.el.classList.remove('sitting'); activeWalks++;
+  }
+  var last=performance.now();
+  function frame(now){
+    requestAnimationFrame(frame);
+    var dt=Math.min(.05,(now-last)/1000); last=now;
+    if(!running) return;
+    if(now-lastLaunch>4500){ lastLaunch=now; launch(); }
+    Object.keys(chars).forEach(function(k){
+      var c=chars[k];
+      if(c.state==='walking' || c.state==='returning'){
+        var t=c.queue[0];
+        if(!t){
+          if(c.state==='walking'){
+            c.state='talking'; c.el.classList.remove('walking'); c.talkTimer=3.6;
+            var sc=c.script, other=chars[sc.to];
+            showBubble(c, sc.a, 3400);
+            setTimeout(function(){ if(running) showBubble(other, sc.b, 2600); }, 1500);
+          } else {
+            c.state='idle'; c.el.classList.add('sitting'); activeWalks--; c.script=null;
+          }
+          return;
+        }
+        var dx=t.x-c.x, dy=t.y-c.y, dist=Math.hypot(dx,dy), step=115*dt;
+        c.el.classList.add('walking');
+        if(dist<=step){ c.x=t.x; c.y=t.y; c.queue.shift(); }
+        else { c.x+=dx/dist*step; c.y+=dy/dist*step; }
+        c.el.style.left=c.x+'px'; c.el.style.top=c.y+'px'; c.el.style.zIndex=Math.round(c.y)+10;
+      } else if(c.state==='talking'){
+        c.talkTimer-=dt;
+        if(c.talkTimer<=0){
+          var home=STAFF[k].home;
+          c.state='returning';
+          c.queue = [{x:home.x,y:home.y}];
+        }
+      }
+    });
+  }
+  if(!reduced){ requestAnimationFrame(frame); }
+  else { Object.keys(chars).forEach(function(k){ chars[k].el.classList.add('sitting'); }); }
+  // If user enables motion via toggle after reduced-motion, start loop lazily
+  var loopStarted=!reduced;
+  if(toggle) toggle.addEventListener('click', function(){ if(running && !loopStarted){ loopStarted=true; last=performance.now(); requestAnimationFrame(frame); } });
+})();
+</script>
+
+</body>
+</html>
