@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>一人会社HQ — 溝口拓斗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f5f3; --surface:#ffffff; --surface2:#eef1ee; --ink:#171a18; --muted:#6b726d; --line:#dde1dc;
+  --accent:#0f6b4f; --accent2:#e8f3ee; --amber:#b45309; --amber-bg:#fef3c7; --red:#b42318; --blue:#175cd3; --blue-bg:#eff6ff;
+  --shadow:0 8px 24px rgba(20,30,25,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#101312; --surface:#171b19; --surface2:#1e2421; --ink:#eef2ee; --muted:#9aa69e; --line:#2a332e; --accent:#3ecf9a; --accent2:#122e24; --amber:#fbbf24; --amber-bg:#2a2110; --blue:#7db4ff; --blue-bg:#16233a; --shadow:0 8px 24px rgba(0,0,0,.35); }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,-apple-system,sans-serif;line-height:1.6}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit}
+button,[role="button"],select,summary{ min-height:44px}
+input,textarea,select{color:var(--ink)}
+.wrap{flex:1;min-width:0;max-width:1120px;margin:0 auto;padding:0 16px 48px}
+section[id],article[id]{scroll-margin-top:78px}
+
+/* Layout + Sidebar */
+.layout{display:flex;align-items:flex-start;max-width:1400px;margin:0 auto}
+.sidebar{width:236px;flex-shrink:0;position:sticky;top:61px;height:calc(100vh - 61px);height:calc(100dvh - 61px);overflow-y:auto;padding:20px 14px 24px;border-right:1px solid var(--line)}
+.side-label{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:0 12px;margin:0 0 8px}
+.side-nav{display:flex;flex-direction:column;gap:2px}
+.side-nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:13.5px;font-weight:500;min-height:44px;line-height:1.35}
+.side-nav a:hover{background:var(--surface2)}
+.side-nav a.active{background:var(--accent2);color:var(--accent);font-weight:700}
+.side-nav a .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.55;flex-shrink:0}
+.side-nav a.active .dot{background:var(--accent);opacity:1}
+.side-nav a.sub{padding-left:38px;font-size:12.5px;color:var(--muted);min-height:38px}
+.side-nav a.sub.active{color:var(--accent)}
+.side-group{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);padding:14px 12px 4px}
+.side-foot{margin-top:20px;padding:12px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted);line-height:1.6}
+.side-close{display:none}
+.menu-btn{display:none;width:44px;height:44px;border:1px solid var(--line);background:var(--surface);border-radius:10px;cursor:pointer;place-items:center;flex-shrink:0;padding:0}
+.scrim{position:fixed;inset:0;background:rgba(10,14,12,.45);z-index:38}
+@media(max-width:960px){
+  .menu-btn{display:grid}
+  .sidebar{display:none;position:fixed;top:0;left:0;z-index:40;width:min(280px,82vw);height:100vh;height:100dvh;background:var(--bg);border-right:1px solid var(--line);box-shadow:12px 0 32px rgba(0,0,0,.18);padding-top:14px}
+  .sidebar.open{display:block;animation:drawer-in .25s ease}
+  @keyframes drawer-in{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+  .side-close{display:grid;margin-left:auto}
+  .side-toprow{display:flex;align-items:center;gap:8px;padding:0 4px}
+}
+
+/* Header */
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1120px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:38px;height:38px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:900;font-family:"Noto Serif JP",serif;font-size:18px;border-radius:9px;flex-shrink:0}
+.brand b{font-size:15px;letter-spacing:.02em}
+.brand span{display:block;font-size:11px;color:var(--muted);line-height:1.2}
+.updated{font-size:11px;color:var(--muted);text-align:right;line-height:1.4}
+.updated strong{color:var(--ink);font-size:12px}
+
+/* Hero */
+.hero{padding:28px 0 18px;display:grid;grid-template-columns:1.35fr .65fr;gap:20px;align-items:end}
+.hero h1{font-family:"Noto Serif JP",serif;font-size:42px;line-height:1.05;margin:6px 0 10px;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.kicker{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:56ch}
+.hero-card{background:var(--ink);color:#f2f4f2;border-radius:14px;padding:18px}
+.hero-card small{opacity:.7;font-size:11px;letter-spacing:.08em}
+.hero-card div{font-size:14px;margin-top:6px;line-height:1.7}
+.hero-card b{font-size:16px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 18px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;display:block}
+.kpi-row{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:nowrap}
+.kpi input{border:none;background:transparent;font-weight:900;font-size:26px;width:100%;min-width:0;flex:1;padding:2px 0;border-bottom:2px dashed var(--line);outline:none}
+.kpi input:focus{border-color:var(--accent)}
+.kpi input.small{font-size:22px;width:72px}
+.kpi .unit{font-weight:700;color:var(--muted)}
+.kpi p{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.bar-amber i{background:#d97706}
+
+/* Sections */
+.section{margin-top:26px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.sec-head h2{font-size:20px;margin:0;letter-spacing:-.01em}
+.sec-head span{font-size:12px;color:var(--muted)}
+
+/* Todo */
+.todo-card{background:var(--surface);border:1px solid #f0d48a;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+@media(prefers-color-scheme:dark){.todo-card{border-color:#4a3a12}}
+.todo-head{background:var(--amber-bg);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.todo-head b{font-size:15px}
+.todo-head span{font-size:12px;background:var(--surface);border:1px solid var(--line);padding:4px 10px;border-radius:99px;font-weight:700}
+.todo-list{list-style:none;margin:0;padding:6px}
+.todo-list li{border-bottom:1px solid var(--line)}
+.todo-list li:last-child{border-bottom:none}
+.todo-list label{display:flex;gap:12px;align-items:flex-start;padding:13px 10px;cursor:pointer;min-height:56px}
+.todo-list input[type=checkbox]{width:22px;height:22px;margin-top:2px;accent-color:var(--accent);flex-shrink:0}
+.todo-list label.done .todo-title{text-decoration:line-through;color:var(--muted)}
+.todo-title{font-weight:700;font-size:14.5px;line-height:1.4}
+.todo-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;vertical-align:middle;margin-left:6px}
+.badge-wait{background:#fef3c7;color:#92400e}
+.badge-stop{background:#fee4e2;color:#7a271a}
+.badge-self{background:#e0e7ff;color:#3730a3}
+@media(prefers-color-scheme:dark){.badge-wait,.badge-stop,.badge-self{filter:brightness(1.2)}}
+
+/* Divisions */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.biz{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.biz-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.biz-num{font-size:11px;font-weight:900;letter-spacing:.12em;color:var(--accent)}
+.biz h3{margin:4px 0 2px;font-size:18px;line-height:1.3}
+.biz .sub{font-size:12.5px;color:var(--muted)}
+.status{flex-shrink:0}
+.status select{border:1px solid var(--line);background:var(--surface2);border-radius:99px;padding:6px 10px;font-size:12px;font-weight:700;min-height:36px}
+.biz ul{margin:12px 0;padding-left:18px;font-size:13.5px;color:#2b322e}
+@media(prefers-color-scheme:dark){.biz ul{color:#cbd5cc}}
+.biz ul li{margin:4px 0}
+.metric-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.metric{background:var(--surface2);border-radius:10px;padding:10px 12px;flex:1;min-width:120px}
+.metric label{font-size:11px;color:var(--muted);font-weight:700;display:block}
+.metric .val{display:flex;align-items:baseline;gap:4px}
+.metric input{border:none;background:transparent;font-weight:900;font-size:20px;width:80px;border-bottom:2px dashed var(--line);outline:none;padding:1px 0}
+.metric input:focus{border-color:var(--accent)}
+.memo{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line)}
+.memo label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+.memo textarea{width:100%;margin-top:6px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;min-height:74px;resize:vertical;font-size:13.5px;line-height:1.6}
+.memo textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.saved{font-size:11px;color:var(--accent);opacity:0;transition:opacity .2s}
+.saved.show{opacity:1}
+
+/* Staff */
+.staff-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.staff{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 12px;text-align:center}
+.avatar{width:44px;height:44px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:17px;background:var(--accent2);color:var(--accent)}
+.staff.president .avatar{background:var(--ink);color:var(--bg);font-size:15px}
+.staff.lead .avatar{background:#fef3c7;color:#92400e}
+.staff b{display:block;font-size:14px}
+.staff span{font-size:11px;color:var(--muted);line-height:1.4;display:block}
+.staff p{font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.4}
+
+/* Timeline / info */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.info{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.info h3{margin:0 0 8px;font-size:15px}
+.info p,.info li{font-size:13.5px;color:var(--muted)}
+.info ul{margin:6px 0;padding-left:18px}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{border:1px solid var(--line);background:var(--surface);padding:10px 16px;border-radius:99px;font-weight:700;font-size:13px;cursor:pointer;min-height:44px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media(max-width:860px){
+  .hero{grid-template-columns:1fr}
+  .hero h1{font-size:34px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .grid2,.info-grid{grid-template-columns:1fr}
+  .staff-grid{grid-template-columns:repeat(2,1fr)}
+  .staff:last-child{grid-column:span 2}
+}
+@media(max-width:380px){ .kpis{grid-template-columns:1fr 1fr} .kpi input{font-size:24px;width:88px} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <button class="menu-btn" id="menuBtn" aria-label="メニューを開く" aria-expanded="false" aria-controls="sidebar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
+    <div class="brand"><div class="mark">拓</div><div><b>一人会社HQ</b><span>溝口拓斗 ・ 一人会社司令塔</span></div></div>
+    <div class="updated">データ時点 <strong>2026年11月17日 10:00</strong><br>最終編集 <span id="lastEdited">—</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="ページメニュー">
+  <div class="side-toprow">
+    <p class="side-label" style="padding:0">Menu</p>
+    <button class="menu-btn side-close" id="menuClose" aria-label="メニューを閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+  </div>
+  <nav class="side-nav">
+    <a href="#top" data-nav="top"><span class="dot"></span>トップ</a>
+    <a href="#summary" data-nav="summary"><span class="dot"></span>数字サマリー</a>
+    <a href="#todo" data-nav="todo"><span class="dot"></span>社長の要対応リスト</a>
+    <div class="side-group">事業部</div>
+    <a href="#divisions" data-nav="divisions"><span class="dot"></span>事業部一覧</a>
+    <a href="#biz-ai" class="sub" data-nav="biz-ai">AI商材事業</a>
+    <a href="#biz-sns" class="sub" data-nav="biz-sns">SNS事業 — Threads</a>
+    <a href="#biz-cw" class="sub" data-nav="biz-cw">受託事業 — クラウドワークス</a>
+    <a href="#biz-estate" class="sub" data-nav="biz-estate">不動産 — 宇都宮</a>
+    <div class="side-group">組織・運用</div>
+    <a href="#staff" data-nav="staff"><span class="dot"></span>AIスタッフ一覧</a>
+    <a href="#info" data-nav="info"><span class="dot"></span>運用ルール・使い方</a>
+  </nav>
+  <div class="side-foot">データ時点<br><strong style="color:var(--ink)">2026年11月17日 10:00</strong><br>チェック・メモ・数字はこのブラウザに保存されます。</div>
+</aside>
+<div class="scrim" id="scrim" hidden></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div>
+      <div class="kicker">Solo Company Headquarters</div>
+      <h1>一人で回す、<br><em>会社全体</em>をここで見る。</h1>
+      <p>社長は溝口拓斗（28歳・本業は営業職 9:00–17:00）。副業として運営する一人会社の全事業を集約。統括はAIのボブ、8部門のAIスタッフと合わせて10名体制で、月10万円の副収入を目指す。</p>
+    </div>
+    <aside class="hero-card">
+      <small>COMPANY PROFILE</small>
+      <div><b>代表</b>　溝口拓斗<br><b>統括</b>　ボブ（AI）<br><b>体制</b>　社長＋統括＋8部門 ＝ 10名<br><b>稼働</b>　平日夜・週末が中心（本業 9–17時）</div>
+    </aside>
+  </section>
+
+  <!-- KPI -->
+  <section class="kpis" id="summary" aria-label="会社の数字サマリー">
+    <div class="kpi">
+      <label>月次目標 ・ 副収入</label>
+      <div class="kpi-row">¥<input class="persist" data-key="goalMonthly" type="number" inputmode="numeric" value="100000" aria-label="月次目標金額"> <span class="unit">/ 月</span></div>
+      <p>一人会社の北極星。まずはここを達成する。</p>
+    </div>
+    <div class="kpi">
+      <label>現在の売上（累計）</label>
+      <div class="kpi-row">¥<input class="persist" data-key="salesTotal" type="number" inputmode="numeric" value="0" aria-label="現在の売上"> </div>
+      <div class="bar bar-amber"><i id="salesBar" style="width:0%"></i></div>
+      <p id="salesPct">目標まであと ¥100,000</p>
+    </div>
+    <div class="kpi">
+      <label>Threads フォロワー</label>
+      <div class="kpi-row"><input class="persist" data-key="followers" type="number" inputmode="numeric" value="0" aria-label="フォロワー数"> <span class="unit">/ <span id="followerGoalText">1,000</span>人</span></div>
+      <div class="bar"><i id="followerBar" style="width:0%"></i></div>
+      <p>@taku242 ・ 目標 <input class="persist small" style="font-size:12px;width:56px;border-bottom:1px dashed var(--line)" data-key="followerGoal" type="number" value="1000" aria-label="フォロワー目標"> 人</p>
+    </div>
+    <div class="kpi">
+      <label>クラウドワークス応募</label>
+      <div class="kpi-row"><input class="persist" data-key="cwApps" type="number" inputmode="numeric" value="11" aria-label="CW応募件数"> <span class="unit">件</span></div>
+      <p>契約 <input class="persist" data-key="cwContracts" type="number" value="0" style="font-size:13px;width:36px" aria-label="CW契約件数"> 件 ・ 全件確認待ち</p>
+      <div class="bar"><i style="width:8%"></i></div>
+      <p>プロフィール充実度 60%</p>
+    </div>
+  </section>
+
+  <!-- TODO -->
+  <section class="section" id="todo">
+    <div class="sec-head"><h2>社長の要対応リスト</h2><span>チェックはこのブラウザに保存されます</span></div>
+    <div class="todo-card">
+      <div class="todo-head"><b>⚑ いま拓斗がやること</b><span id="todoCount">0 / 4 完了</span></div>
+      <ul class="todo-list">
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo1"><span><span class="todo-title">阿部さんへの条件書面メール<span class="badge badge-wait">承認待ち</span></span><br><span class="todo-desc">井上ビル地下1階の条件を書面でもらう下書きが承認待ち（未送信）。ルームズセレクト 阿部さん宛て。</span></span></label></li>
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo2"><span><span class="todo-title">クラウドワークス本人確認<span class="badge badge-self">本人のみ可</span></span><br><span class="todo-desc">身分証の提出が未提出。これが終わるとプロフィール充実度 60% → 上昇。AIでは代替できない。</span></span></label></li>
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo3"><span><span class="todo-title">Threads実績投稿用の売上スクショ<span class="badge badge-wait">送付待ち</span></span><br><span class="todo-desc">MyFans売上画面のスクショ待ち。届けば個人情報をマスク加工して「初月107万円」の実績投稿に使用。</span></span></label></li>
+        <li><label data-todo-label><input type="checkbox" class="persist-check" data-key="todo4"><span><span class="todo-title">Xサブスク解約<span class="badge badge-stop">停止中</span></span><br><span class="todo-desc">ログイン情報待ちで停止中。状態表示のみ — 情報が揃うまで催促しない。</span></span></label></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DIVISIONS -->
+  <section class="section" id="divisions">
+    <div class="sec-head"><h2>事業部</h2><span>ステータスとメモはその場で編集・保存できます</span></div>
+    <div class="grid2">
+
+      <article class="biz" id="biz-ai">
+        <div class="biz-top"><div><div class="biz-num">DIVISION 01</div><h3>AI商材事業</h3><div class="sub">note ／ Tips ／ Brain で販売</div></div><div class="status"><select class="persist-select" data-key="status-ai" aria-label="AI商材事業ステータス"><option>進行中</option><option selected>保留中</option><option>確認待ち</option><option>販売中</option><option>完了</option></select></div></div>
+        <ul>
+          <li>テーマは「AIを使って稼ぐ系」の情報商材</li>
+          <li>テスト作 <strong>「ChatGPT副業スタートパック：コピペで使えるプロンプト50」</strong></li>
+          <li>全7部門の承認完了（7/7）— 企画〜経理まで通過済み</li>
+          <li>販売前に直す項目が6件残っているが、本人の判断で<strong>一旦保留</strong>（テスト完了のまま置いておく決定済み）</li>
+        </ul>
+        <div class="metric-row">
+          <div class="metric"><label>販売価格（Brain予定）</label><div class="val">¥<input class="persist" data-key="priceBrain" type="number" value="2980"></div></div>
+          <div class="metric"><label>アフィリエイト</label><div class="val"><input class="persist" data-key="affRate" type="number" value="30">%</div></div>
+          <div class="metric"><label>売上</label><div class="val">¥<input class="persist" data-key="salesAi" type="number" value="0"></div></div>
+        </div>
+        <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-ai" placeholder="例：6件の修正に着手するタイミング、次回作のテーマなど"></textarea></div>
+      </article>
+
+      <article class="biz" id="biz-sns">
+        <div class="biz-top"><div><div class="biz-num">DIVISION 02</div><h3>SNS事業 — Threads</h3><div class="sub">@taku242（タク｜myfans）</div></div><div class="status"><select class="persist-select" data-key="status-sns" aria-label="SNS事業ステータス"><option selected>進行中</option><option>保留中</option><option>確認待ち</option><option>完了</option></select></div></div>
+        <ul>
+          <li>MyFansノウハウ発信 ＋ 撮影モデル募集。将来はノウハウ商材販売へ</li>
+          <li>1日5投稿で運用中（8:42 / 12:42 / 17:42 / 19:42 / 22:42・承認タップ式）</li>
+          <li>公表実績：<strong>MyFans 初月107万円／最高月収800万円</strong>（数字×学びの形で発信）</li>
+          <li>週次分析は毎週日曜 21:42。専用ダッシュボードが別にあります</li>
+        </ul>
+        <div class="metric-row">
+          <div class="metric"><label>フォロワー</label><div class="val"><input class="persist" data-key="followers2" type="number" value="0">人</div></div>
+          <div class="metric"><label>投稿済み</label><div class="val"><input class="persist" data-key="postsDone" type="number" value="6">本</div></div>
+        </div>
+        <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-sns" placeholder="例：伸びた投稿の型、モデル応募の反応、来週の配分など"></textarea></div>
+      </article>
+
+      <article class="biz" id="biz-cw">
+        <div class="biz-top"><div><div class="biz-num">DIVISION 03</div><h3>受託事業 — クラウドワークス</h3><div class="sub">ワーカー名「ぐっち1008」</div></div><div class="status"><select class="persist-select" data-key="status-cw" aria-label="受託事業ステータス"><option>進行中</option><option>保留中</option><option selected>確認待ち</option><option>完了</option></select></div></div>
+        <ul>
+          <li>プロフィール整備済み：自己紹介・職種・受注カテゴリ13件・スキル12件（レベル3）・時給下限 ¥1,500</li>
+          <li>応募11件、全件クライアント確認待ち。契約はまだ0件</li>
+          <li>主な応募：音楽体験記事（¥3,000/記事×月8本想定）、Instagram運用サポート（月¥30,000提示）、日常・実体験ライター10記事（¥34,999提示）</li>
+          <li>本人確認（身分証）が未提出で充実度は60%止まり</li>
+        </ul>
+        <div class="metric-row">
+          <div class="metric"><label>応募</label><div class="val"><input class="persist" data-key="cwApps2" type="number" value="11">件</div></div>
+          <div class="metric"><label>契約</label><div class="val"><input class="persist" data-key="cwContracts2" type="number" value="0">件</div></div>
+          <div class="metric"><label>充実度</label><div class="val"><input class="persist" data-key="cwProfile" type="number" value="60">%</div></div>
+        </div>
+        <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-cw" placeholder="例：返信があった案件、テストライティングの結果など"></textarea></div>
+      </article>
+
+      <article class="biz" id="biz-estate">
+        <div class="biz-top"><div><div class="biz-num">PROJECT</div><h3>不動産 — 宇都宮</h3><div class="sub">店舗・事務所（飲食可）探し</div></div><div class="status"><select class="persist-select" data-key="status-estate" aria-label="不動産ステータス"><option>進行中</option><option>保留中</option><option selected>確認待ち</option><option>完了</option></select></div></div>
+        <ul>
+          <li><strong>井上ビル 地下1階</strong> — 11月12日に内見済み、検討を進める意向</li>
+          <li>仲介はルームズセレクト 阿部さん</li>
+          <li>次のアクション：条件を書面でもらう（メール下書きが承認待ち・未送信）</li>
+          <li>宇都宮で店舗・事務所用、飲食可の物件を継続探索中</li>
+        </ul>
+        <div class="metric-row">
+          <div class="metric"><label>内見済み（井上ビル）</label><div class="val"><input class="persist" data-key="estateViewed" type="number" value="1">件</div></div>
+        </div>
+        <div class="memo"><label>メモ <span class="saved" data-saved>✓ 保存しました</span></label><textarea class="persist-text" data-key="memo-estate" placeholder="例：書面で届いた条件、賃料・初期費用の気になった点など"></textarea></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- STAFF -->
+  <section class="section" id="staff">
+    <div class="sec-head"><h2>AIスタッフ一覧</h2><span>社長＋統括＋8部門 ＝ 10名体制</span></div>
+    <div class="staff-grid">
+      <div class="staff president"><div class="avatar">拓斗</div><b>溝口拓斗</b><span>社長 / オーナー</span><p>最終承認と意思決定。本業と両立しながら全体を見る</p></div>
+      <div class="staff lead"><div class="avatar">ボ</div><b>ボブ</b><span>統括 / コーディネーター</span><p>全部署の進行管理と社長への報告窓口</p></div>
+      <div class="staff"><div class="avatar">ミ</div><b>ミライ</b><span>企画</span><p>商品・投稿の企画立案</p></div>
+      <div class="staff"><div class="avatar">シ</div><b>シラベ</b><span>調査</span><p>競合・市場リサーチ</p></div>
+      <div class="staff"><div class="avatar">ハ</div><b>ハヤテ</b><span>執筆</span><p>本文・台本の執筆</p></div>
+      <div class="staff"><div class="avatar">ミ</div><b>ミツキ</b><span>編集・品質チェック</span><p>校正と販売可否の判定</p></div>
+      <div class="staff"><div class="avatar">ア</div><b>アオ</b><span>デザイン</span><p>カバー・図解の設計</p></div>
+      <div class="staff"><div class="avatar">ネ</div><b>ネゴシ</b><span>価格・販売</span><p>価格と販売条件の設計</p></div>
+      <div class="staff"><div class="avatar">バ</div><b>バズ</b><span>マーケティング</span><p>集客・SNS導線の設計</p></div>
+      <div class="staff"><div class="avatar">カ</div><b>カイケイ</b><span>経理・分析</span><p>数字の集計と改善提案</p></div>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section class="section" id="info">
+    <div class="info-grid">
+      <div class="info">
+        <h3>運用ルール</h3>
+        <ul>
+          <li>Threads投稿は1日5本、各回 社長の承認タップが必要</li>
+          <li>金額に触れる投稿は社長の最終確認が必須。実績は盛らず実数字のみ</li>
+          <li>モデル募集は週2〜3回まで、18+明記。連絡はDMのみ</li>
+          <li>週次分析：日曜 21:42 ／ 2〜3日ごとに速報チェック</li>
+        </ul>
+      </div>
+      <div class="info">
+        <h3>このHQの使い方</h3>
+        <p>ブックマークしてスマホからいつでも開けます。要対応のチェック、事業部のメモ、フォロワー数などの数字はこのブラウザに保存され、次に開いたときも残ります（端末・ブラウザごとに保存）。</p>
+        <div class="actions">
+          <button class="btn primary" id="scrollTodo">要対応リストへ</button>
+          <button class="btn" id="resetBtn">入力を初期値に戻す</button>
+        </div>
+        <div id="resetConfirm" hidden style="margin-top:12px;background:var(--amber-bg);border:1px solid var(--line);border-radius:10px;padding:12px">
+          <p style="margin:0 0 10px;font-size:13px;color:var(--ink)">このブラウザに保存したチェック・メモ・数字を初期値に戻しますか？</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="resetYes" style="background:#b42318;color:#fff;border-color:#b42318">はい、リセットする</button><button class="btn" id="resetNo">キャンセル</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>一人会社HQ ・ データ時点：2026年11月17日 10:00 JST時点の実データ</span>
+    <span>数字はすべて本人の実績・進行中データです</span>
+  </footer>
+</div>
+</div><!-- /layout -->
+
+<script>
+(function(){
+  var PREFIX='hq_v1_';
+  function $(s,c){return (c||document).querySelector(s)}
+  function $$(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))}
+  function save(key,val){ try{ localStorage.setItem(PREFIX+key, JSON.stringify(val)); markEdited(); }catch(e){} }
+  function load(key){ try{ var v=localStorage.getItem(PREFIX+key); return v===null?null:JSON.parse(v);}catch(e){return null} }
+  function markEdited(){
+    var now=new Date();
+    var str=now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    var el=$('#lastEdited'); if(el) el.textContent=str;
+    try{ localStorage.setItem(PREFIX+'_lastEdited', str); }catch(e){}
+  }
+  // restore last edited
+  var le=load('_lastEdited'); if(le) $('#lastEdited').textContent=le;
+
+  function flashSaved(input){
+    var memo=input.closest('.memo'); if(!memo) return;
+    var s=memo.querySelector('[data-saved]'); if(!s) return;
+    s.classList.add('show'); setTimeout(function(){s.classList.remove('show')},1200);
+  }
+  function updateDerived(){
+    var goal=parseFloat((document.querySelector('[data-key="goalMonthly"]')||{}).value)||100000;
+    var sales=parseFloat((document.querySelector('[data-key="salesTotal"]')||{}).value)||0;
+    var pct=goal>0?Math.min(100, Math.round(sales/goal*100)):0;
+    var bar=$('#salesBar'); if(bar) bar.style.width=pct+'%';
+    var sp=$('#salesPct'); if(sp) sp.textContent = sales>=goal ? '目標達成 🎉' : '目標まであと ¥'+(goal-sales).toLocaleString('ja-JP')+'（'+pct+'%）';
+    var f=parseFloat((document.querySelector('[data-key="followers"]')||{}).value)||0;
+    var fg=parseFloat((document.querySelector('[data-key="followerGoal"]')||{}).value)||1000;
+    var fb=$('#followerBar'); if(fb) fb.style.width=(fg>0?Math.min(100,f/fg*100):0)+'%';
+    var fgt=$('#followerGoalText'); if(fgt) fgt.textContent=fg.toLocaleString('ja-JP');
+    updateTodoCount();
+  }
+  function updateTodoCount(){
+    var boxes=$$('.persist-check'); var done=boxes.filter(function(b){return b.checked}).length;
+    var el=$('#todoCount'); if(el) el.textContent=done+' / '+boxes.length+' 完了';
+    $$('[data-todo-label]').forEach(function(l){ var cb=l.querySelector('input'); if(cb) l.classList.toggle('done', !!cb.checked); });
+  }
+
+  // persist inputs (number/text)
+  $$('.persist').forEach(function(inp){
+    var key=inp.getAttribute('data-key'); var v=load(key); if(v!==null) inp.value=v;
+    inp.addEventListener('input',function(){ save(key, inp.value); updateDerived(); });
+    inp.addEventListener('change',function(){ save(key, inp.value); updateDerived(); });
+  });
+  // textareas
+  $$('.persist-text').forEach(function(ta){
+    var key=ta.getAttribute('data-key'); var v=load(key); if(v!==null) ta.value=v;
+    var t; ta.addEventListener('input',function(){ clearTimeout(t); t=setTimeout(function(){ save(key, ta.value); flashSaved(ta); },350); });
+  });
+  // selects
+  $$('.persist-select').forEach(function(sel){
+    var key=sel.getAttribute('data-key'); var v=load(key); if(v!==null) sel.value=v;
+    sel.addEventListener('change',function(){ save(key, sel.value); });
+  });
+  // checkboxes
+  $$('.persist-check').forEach(function(cb){
+    var key=cb.getAttribute('data-key'); var v=load(key); if(v!==null) cb.checked=!!v;
+    cb.addEventListener('change',function(){ save(key, cb.checked); updateTodoCount(); });
+  });
+
+  updateDerived();
+
+  $('#scrollTodo').addEventListener('click',function(){ document.getElementById('todo').scrollIntoView({behavior:'smooth'}); });
+  var rc=$('#resetConfirm');
+  $('#resetBtn').addEventListener('click',function(){ rc.hidden=false; rc.scrollIntoView({behavior:'smooth',block:'nearest'}); });
+  $('#resetNo').addEventListener('click',function(){ rc.hidden=true; });
+  $('#resetYes').addEventListener('click',function(){
+    Object.keys(localStorage).filter(function(k){return k.indexOf(PREFIX)===0}).forEach(function(k){ localStorage.removeItem(k); });
+    location.reload();
+  });
+})();
+</script>
+<script>
+(function(){
+  var sidebar=document.getElementById('sidebar');
+  var scrim=document.getElementById('scrim');
+  var menuBtn=document.getElementById('menuBtn');
+  var menuClose=document.getElementById('menuClose');
+  function isMobile(){ return window.matchMedia('(max-width: 960px)').matches; }
+  function openMenu(){
+    sidebar.classList.add('open'); scrim.hidden=false;
+    menuBtn.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    sidebar.classList.remove('open'); scrim.hidden=true;
+    menuBtn.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+  menuBtn.addEventListener('click', openMenu);
+  menuClose.addEventListener('click', closeMenu);
+  scrim.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeMenu(); });
+  window.addEventListener('resize', function(){ if(!isMobile()) closeMenu(); });
+
+  var links=Array.prototype.slice.call(document.querySelectorAll('.side-nav a[data-nav]'));
+  links.forEach(function(a){
+    a.addEventListener('click', function(){ if(isMobile()) closeMenu(); });
+  });
+
+  // Scrollspy: highlight the section currently in view
+  var targets=links.map(function(a){ return document.getElementById(a.getAttribute('data-nav')); }).filter(Boolean);
+  function setActive(id){
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('data-nav')===id); });
+  }
+  if('IntersectionObserver' in window && targets.length){
+    var visible={};
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ visible[en.target.id]=en.isIntersecting; });
+      for(var i=0;i<targets.length;i++){ if(visible[targets[i].id]){ setActive(targets[i].id); break; } }
+    }, { rootMargin:'-70px 0px -55% 0px', threshold:0 });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+  setActive('top');
+})();
+</script>
+</body>
+</html>
